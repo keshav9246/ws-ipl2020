@@ -1,24 +1,17 @@
 package com.cricket.wsipl2020.service;
-
 import com.cricket.wsipl2020.dto.PredictionPointsDTO;
 import com.cricket.wsipl2020.model.Schedule;
 import com.cricket.wsipl2020.model.User;
 import com.cricket.wsipl2020.repository.PredictionRepo;
 import com.cricket.wsipl2020.repository.ScheduleRepo;
 import com.cricket.wsipl2020.repository.UserRepo;
-import org.apache.tomcat.jni.Local;
-import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class UserService {

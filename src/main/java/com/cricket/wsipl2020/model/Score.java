@@ -1,6 +1,5 @@
 package com.cricket.wsipl2020.model;
 
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 

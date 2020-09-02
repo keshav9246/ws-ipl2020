@@ -5,6 +5,7 @@ import javax.persistence.Id;
 
 @Entity
 public class Player {
+
     @Id
     private String name;
     private String team;
