@@ -3,6 +3,7 @@ package com.cricket.wsipl2020.repository;
 import com.cricket.wsipl2020.dto.PredictionPointsDTO;
 import com.cricket.wsipl2020.model.Prediction;
 import com.cricket.wsipl2020.model.PredictionPK;
+import org.hibernate.annotations.SQLInsert;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,7 +17,7 @@ import java.util.List;
 public interface PredictionRepo extends CrudRepository<Prediction, PredictionPK> {
 
     @Modifying @Transactional
-    @Query(value = "Update prediction set prediction = :predictedTeam where game_num = :gameNum and user_id = :userId", nativeQuery = true)
+    @Query( value = "Insert into prediction (game_num, user_id, prediction, points_gained) values (:gameNum, :userId, :predictedTeam, 0.0)", nativeQuery = true)
     void submitPrediction(@Param("gameNum") Integer gameNum, @Param("userId")String userId,@Param("predictedTeam") String predictedTeam);
 
 

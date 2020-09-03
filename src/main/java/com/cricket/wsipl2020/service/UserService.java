@@ -48,7 +48,7 @@ public class UserService {
 
         for(Schedule game : gamesToday) {
             System.out.println(game.getGameTime()+"  "+LocalTime.now().plusMinutes(90));
-            if((LocalTime.now().plusMinutes(90).isBefore(game.getGameTime())))
+            if((LocalTime.now().plusMinutes(90).isBefore(game.getGameTime().toLocalTime())))
             {
                 predictionEligibleGames.add(game);
             }

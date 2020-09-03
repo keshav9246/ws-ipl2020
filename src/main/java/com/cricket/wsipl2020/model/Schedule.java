@@ -6,8 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalTime;
+
 
 
 @Entity
@@ -17,11 +18,11 @@ public class Schedule {
     @Id
     private Integer gameNum;
     private LocalDate gameDate;
-    private LocalTime gameTime;
+    private Time gameTime;
     private String team1;
     private String team2;
-    private String team1Votes;
-    private String team2Votes;
+    private String team1_votes;
+    private String team2_votes;
     private String winningTeam;
     private Float maxPoints;
 
