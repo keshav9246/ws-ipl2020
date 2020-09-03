@@ -38,8 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/gamesToday")
-    public List<Schedule> fetchGamesToday()
-    {
+    public List<Schedule> fetchGamesToday() {
         return userService.fetchTodaysGame();
 
     }
