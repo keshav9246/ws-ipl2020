@@ -1,20 +1,12 @@
 package com.cricket.wsipl2020.controller;
-
 import com.cricket.wsipl2020.dto.PredictionPointsDTO;
+import com.cricket.wsipl2020.model.PredictionRequest;
 import com.cricket.wsipl2020.model.Schedule;
+import com.cricket.wsipl2020.model.WinnerRequest;
 import com.cricket.wsipl2020.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,18 +32,17 @@ public class UserController {
     @GetMapping("/gamesToday")
     public List<Schedule> fetchGamesToday() {
         return userService.fetchTodaysGame();
-
     }
 
     @PostMapping("/submitPrediciton")
-    public void submitPrediciton(Integer gameNum, String userId, String team1, String predictedTeam )
+    public void submitPrediciton(@RequestBody PredictionRequest request)
     {
-        userService.submitPrediction(gameNum, userId,team1, predictedTeam);
+        userService.submitPrediction(request.getGameNum(), request.getUserId(), request.getTeam1(), request.getPredictedTeam());
     }
     @PostMapping("/submitWinningTeam")
-    public void submitWinningTeam(Integer gameNum, String winningTeam )
+    public void submitWinningTeam(@RequestBody WinnerRequest request)
     {
-        userService.submitWinningTeam(gameNum, winningTeam);
+        userService.submitWinningTeam(request.getGameNum(), request.getWinningTeam());
     }
 
     @GetMapping("/getPredictions")
