@@ -11,6 +11,5 @@ public class PredictionRequest {
 
     private Integer gameNum;
     private String userId;
-    private String team1;
     private String predictedTeam;
 }

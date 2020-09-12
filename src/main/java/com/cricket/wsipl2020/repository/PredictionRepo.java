@@ -3,7 +3,6 @@ package com.cricket.wsipl2020.repository;
 import com.cricket.wsipl2020.dto.PredictionPointsDTO;
 import com.cricket.wsipl2020.model.Prediction;
 import com.cricket.wsipl2020.model.PredictionPK;
-import org.hibernate.annotations.SQLInsert;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,8 +16,20 @@ import java.util.List;
 public interface PredictionRepo extends CrudRepository<Prediction, PredictionPK> {
 
     @Modifying @Transactional
-    @Query( value = "Insert into prediction (game_num, user_id, prediction, points_gained) values (:gameNum, :userId, :predictedTeam, 0.0)", nativeQuery = true)
+      @Query( value = "Insert into prediction (game_num, user_id, prediction, points_gained) values (:gameNum, :userId, :predictedTeam, 0.0)", nativeQuery = true)
     void submitPrediction(@Param("gameNum") Integer gameNum, @Param("userId")String userId,@Param("predictedTeam") String predictedTeam);
+
+    @Modifying @Transactional
+    @Query( value = "Update prediction set prediction = :predictedTeam where game_num = :gameNum  and user_id = :userId", nativeQuery = true)
+    void updatePredition(@Param("gameNum") Integer gameNum, @Param("userId")String userId,@Param("predictedTeam") String predictedTeam);
+
+    @Modifying @Transactional
+    @Query( value = "Update prediction set points_gained = :pointsEarned where game_num = :gameNum  and user_id in (:userIds)", nativeQuery = true)
+    void updatePoints(@Param("gameNum") Integer gameNum, @Param("userIds")List<String> userIds,@Param("pointsEarned") Float pointsEarned);
+
+
+    @Query( value = "Select count(*) from prediction where user_id = :userId and game_num = :gameNum", nativeQuery = true)
+    Integer checkPrediction(@Param("gameNum") Integer gameNum, @Param("userId")String userId);
 
 
     @Query(value = "Select new com.cricket.wsipl2020.dto.PredictionPointsDTO (u.playId, p.predictionPK.gameNum,p.predictionPK.userId, s.team1, s.team2, s.winningTeam, p.prediction, s.maxPoints, p.pointsGained)  from Prediction p\n" +
@@ -26,6 +37,9 @@ public interface PredictionRepo extends CrudRepository<Prediction, PredictionPK>
             "inner Join User u on u.userId = p.predictionPK.userId\n" +
             "where u.playId = (Select u.playId from User u where u.userId = :userId)")
     List<PredictionPointsDTO> fetchPredictionList(@Param("userId") String userId);
+
+    @Query( value = "Select user_id from prediction where game_num = :gameNum and prediction = :winningTeam", nativeQuery = true)
+    List<String> fetchWinningUsers(@Param("gameNum") Integer gameNum, @Param("winningTeam") String winningTeam);
 
 }
 

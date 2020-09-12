@@ -34,15 +34,15 @@ public class UserController {
         return userService.fetchTodaysGame();
     }
 
-    @PostMapping("/submitPrediciton")
+    @PostMapping("/submitPrediction")
     public void submitPrediciton(@RequestBody PredictionRequest request)
     {
-        userService.submitPrediction(request.getGameNum(), request.getUserId(), request.getTeam1(), request.getPredictedTeam());
+        userService.submitPrediction(request.getGameNum(), request.getUserId(), request.getPredictedTeam());
     }
     @PostMapping("/submitWinningTeam")
     public void submitWinningTeam(@RequestBody WinnerRequest request)
     {
-        userService.submitWinningTeam(request.getGameNum(), request.getWinningTeam());
+        userService.submitWinningTeam(request.getGameNum(), request.getWinningTeam(), request.getPointsEarned());
     }
 
     @GetMapping("/getPredictions")

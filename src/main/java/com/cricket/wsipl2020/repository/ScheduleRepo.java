@@ -29,7 +29,10 @@ public interface ScheduleRepo extends CrudRepository<Schedule, Integer> {
     void submitTeam2Vote(@Param("gameId") Integer gameId);
 
     @Modifying @Transactional
-    @Query(value = "Update schedule set winning_team = :winningTeam where game_num =:gameId",nativeQuery = true)
-    void updateWinningTeam(@Param("gameId") Integer gameId, @Param("winningTeam") String winningTeam);
+    @Query(value = "Update schedule set winning_team = :winningTeam, max_points = :pointsEarned where game_num =:gameId",nativeQuery = true)
+    Integer updateWinningTeam(@Param("gameId") Integer gameId, @Param("winningTeam") String winningTeam,  @Param("pointsEarned") Float pointsEarned);
+
+    @Query(value = "Select winning_team from schedule where game_num = :gameId",nativeQuery = true)
+    String checkWinner(@Param("gameId") Integer gameId);
 
 }

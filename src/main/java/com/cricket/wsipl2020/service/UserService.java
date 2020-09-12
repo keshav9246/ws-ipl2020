@@ -58,19 +58,30 @@ public class UserService {
 
     }
 
-    public void submitPrediction(Integer gameId, String userId, String team1, String predictedTeam) {
-        predictionRepo.submitPrediction(gameId,userId,predictedTeam);
-        if(team1.equals(predictedTeam)) {
-            scheduleRepo.submitTeam1Vote(gameId);
-        }
-        else {
-            scheduleRepo.submitTeam2Vote(gameId);
-        }
+    public void submitPrediction(Integer gameId, String userId, String predictedTeam) {
+        Integer predicitonExists = predictionRepo.checkPrediction(gameId, userId);
 
+        if(predicitonExists == 0) {
+            //insert into prediction
+            predictionRepo.submitPrediction(gameId,userId,predictedTeam);
+        }
+        else{
+            //update predition as the predicction already exists
+            predictionRepo.updatePredition(gameId,userId,predictedTeam);
+        }
     }
 
-    public void submitWinningTeam(Integer gameNum, String winningTeam){
-        scheduleRepo.updateWinningTeam(gameNum, winningTeam);
+    public void submitWinningTeam(Integer gameNum, String winningTeam, Float pointsEarned){
+        String winnerExists = scheduleRepo.checkWinner(gameNum);
+
+        if (winnerExists == null){
+            scheduleRepo.updateWinningTeam(gameNum, winningTeam, pointsEarned);
+            List<String> userIds = predictionRepo.fetchWinningUsers(gameNum, winningTeam);
+            predictionRepo.updatePoints(gameNum,userIds,pointsEarned);
+            Integer updatecount = userRepo.updateUserPredictionPoints(userIds, pointsEarned);
+        }
+
+
     }
 
     public List<PredictionPointsDTO> fetchPredictions(String userId) {
