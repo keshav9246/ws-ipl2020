@@ -2,6 +2,7 @@ package com.cricket.wsipl2020.controller;
 import com.cricket.wsipl2020.dto.PredictionPointsDTO;
 import com.cricket.wsipl2020.model.PredictionRequest;
 import com.cricket.wsipl2020.model.Schedule;
+import com.cricket.wsipl2020.model.Score;
 import com.cricket.wsipl2020.model.WinnerRequest;
 import com.cricket.wsipl2020.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/auth")
-    public boolean authenticateUser(String userName, String pwd)
-    {
-        return userService.authenticate(userName, pwd);
-    }
+//    @PostMapping("/auth")
+//    public boolean authenticateUser(String userName, String pwd)
+//    {
+//        return userService.authenticate(userName, pwd);
+//    }
 
 
     @GetMapping("/schedule")
@@ -49,6 +50,11 @@ public class UserController {
     public List<PredictionPointsDTO> fetchPredictions(String userId)
     {
         return  userService.fetchPredictions(userId);
+    }
+
+    @PostMapping("/submitScore")
+    public void submitScore(@RequestBody Score playerScore){
+        userService.submitScore(playerScore);
     }
 
 

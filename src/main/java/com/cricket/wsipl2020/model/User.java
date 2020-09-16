@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Getter @Setter
 @Entity
@@ -15,7 +15,17 @@ public class User {
     private Integer playId;
     @Id
     private String userId;
-    private String pwd;
     private Float predictionScore;
-    private String role;
+    private String userRole;
+    @ManyToMany
+    private List<Player> mainTeam;
+    @ManyToMany
+    private List<Player> backupTeam;
+    private String qualifyingTeams;
+    private String orangeCap;
+    private String purpleCap;
+    private Float dream18Score;
+
+
+
 }
