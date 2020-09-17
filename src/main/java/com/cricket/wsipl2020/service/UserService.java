@@ -76,7 +76,36 @@ public class UserService {
         }
     }
 
-    public void submitWinningTeam(Integer gameNum, String winningTeam, Float pointsEarned){
+    public List<User> fetchAllUsers()
+    {
+        List<User> userList = (List<User>)userRepo.findAll();
+        return userList;
+    }
+
+    public List<Score> fetchDailyScores(){
+        return (List<Score>)scoreRepo.findAll();
+    }
+
+    public List<DailyPlayerPoints> fetchDailyFantasyPoints(){
+        return (List<DailyPlayerPoints>) dailyPlayerPointsRepo.findAll();
+    }
+
+    public List<Player> fetchPlayers(){
+        return (List<Player>) playerRepo.findAll();
+    }
+    public List<PointsTableResponse> fetchPredictionPointsTable() {
+        return userRepo.fetchPredictionPointsTable();
+    }
+
+    public List<PointsTableResponse> fetchFantasyPointsTable() {
+        return userRepo.fetchFantasyPointsTable();
+    }
+        public List<User> fetchCompleteUserDetails(String userId){
+        return userRepo.fetchCompleteUserDetails(userId);
+    }
+
+
+        public void submitWinningTeam(Integer gameNum, String winningTeam, Float pointsEarned){
         String winnerExists = scheduleRepo.checkWinner(gameNum);
 
         if (winnerExists == null){
@@ -89,8 +118,12 @@ public class UserService {
 
     }
 
-    public List<PredictionPointsDTO> fetchPredictions(String userId) {
-        return predictionRepo.fetchPredictionList(userId);
+    public List<PredictionPointsDTO> fetchPredictions() {
+        return predictionRepo.fetchPredictionList();
+    }
+
+    public List<PredictionPointsDTO> fetchPredictionsByUser(String userId) {
+        return predictionRepo.fetchPredictionsByUser(userId);
     }
 
     public void submitScore(Score playerScore){
@@ -100,12 +133,15 @@ public class UserService {
                 playerScore.getBallsBowled(), playerScore.getRunsConceded(), playerScore.getWicketsTaken(), playerScore.getBwldLbwCnb(), playerScore.getMaidenOvers(),playerScore.getHatricks(),
                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings());
 
-         DailyPlayerPoints dailyPlayerPoints = calculateTotalPoints(playerScore.getRunsScored(), playerScore.getBallsFaced(), playerScore.getFoursHit(), playerScore.getSixesHit(), playerScore.getIsNotout(),
+        String role = playerRepo.getPlayerRole(playerScore.getScorePK().getPlayerName());
+                DailyPlayerPoints dailyPlayerPoints = calculateTotalPoints(playerScore.getRunsScored(), playerScore.getBallsFaced(), playerScore.getFoursHit(), playerScore.getSixesHit(), playerScore.getIsNotout(),
                  playerScore.getBallsBowled(), playerScore.getRunsConceded(), playerScore.getWicketsTaken(),playerScore.getBwldLbwCnb(), playerScore.getMaidenOvers(),playerScore.getHatricks(),
-                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings());
+                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings(), role);
 
         DailyPlayerPointsPK dailyPlayerPointsPK = new DailyPlayerPointsPK( playerScore.getScorePK().getGameNum(),playerScore.getScorePK().getPlayerName());
         dailyPlayerPoints.setDailyPlayerPointsPK(dailyPlayerPointsPK);
+
+
 
          dailyPlayerPointsRepo.save(dailyPlayerPoints);
 
@@ -118,7 +154,7 @@ public class UserService {
 
     public DailyPlayerPoints calculateTotalPoints(Integer runsScored, Integer balls, Integer fours, Integer sixes, Boolean isNO,
                                                   Integer ballsBowled, Integer runsGiven, Integer wickets, Integer bwldLb, Integer maidens,Integer hatrick,
-                                                  Integer catches, Integer directHits, Integer stumpings){
+                                                  Integer catches, Integer directHits, Integer stumpings, String role){
 
         DailyPlayerPoints dailyPlayerPoints = new DailyPlayerPoints();
         Float runsPoints = 0.0f;
@@ -140,12 +176,12 @@ public class UserService {
             runsPoints = runsScored * 0.5f;
             strikeRate = (runsScored * 100.0f )/ balls;
 
-            if (balls > 15){
+            if (balls >= 15){
                 if(strikeRate >200){
-                    if(balls > 45){
+                    if(balls >= 45){
                         strikeRateBonus = strikeRateBonus + 10;
                     }
-                    else if(balls > 25){
+                    else if(balls >= 25){
                         strikeRateBonus = strikeRateBonus + 7;
                     }
                     else {
@@ -183,7 +219,7 @@ public class UserService {
             runsBonus = runsBonus + 3;
         }
 
-        if(isNO == true && runsScored > 15)
+        if(isNO == true && runsScored >= 15)
         {
             runsBonus = runsBonus + 7;
         }
@@ -245,6 +281,9 @@ public class UserService {
         bowlingPoints = wicketPoints + economyBonus + hatrickBonus + maidenOverBonus + lbwOrBldPoints;
         fieldingPoints = catchesPoints + stumpingPoints + directHitPoints;
         Float totalGamePoints = battingPoints + bowlingPoints + fieldingPoints;
+        if(role.equals("Captain")){
+            totalGamePoints = totalGamePoints * 1.5F;
+        }
 
         dailyPlayerPoints.setRunsScored(runsScored);
         dailyPlayerPoints.setBallsFaced(balls);

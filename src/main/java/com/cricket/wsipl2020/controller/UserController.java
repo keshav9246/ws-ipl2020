@@ -1,9 +1,6 @@
 package com.cricket.wsipl2020.controller;
 import com.cricket.wsipl2020.dto.PredictionPointsDTO;
-import com.cricket.wsipl2020.model.PredictionRequest;
-import com.cricket.wsipl2020.model.Schedule;
-import com.cricket.wsipl2020.model.Score;
-import com.cricket.wsipl2020.model.WinnerRequest;
+import com.cricket.wsipl2020.model.*;
 import com.cricket.wsipl2020.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +44,56 @@ public class UserController {
     }
 
     @GetMapping("/getPredictions")
-    public List<PredictionPointsDTO> fetchPredictions(String userId)
+    public List<PredictionPointsDTO> fetchPredictions()
     {
-        return  userService.fetchPredictions(userId);
+        return  userService.fetchPredictions();
+    }
+
+    @GetMapping("/myPredictions")
+    public List<PredictionPointsDTO> fetchPredictionsByUser(String userId)
+    {
+        return  userService.fetchPredictionsByUser(userId);
     }
 
     @PostMapping("/submitScore")
     public void submitScore(@RequestBody Score playerScore){
         userService.submitScore(playerScore);
+    }
+
+    @GetMapping("/allUsers")
+    public List<User> fetchAllUsers()
+    {
+        return userService.fetchAllUsers();
+    }
+
+    @GetMapping("/playerScores")
+    public List<Score> fetchDailyPlayerScores(){
+        return userService.fetchDailyScores();
+    }
+
+    @GetMapping("/playerPoints")
+    public List<DailyPlayerPoints> fetchDailyPlayerFantasyPoints(){
+        return userService.fetchDailyFantasyPoints();
+    }
+
+    @GetMapping("/userDetails")
+    public List<User> fetchMyteam(String userId){
+        return userService.fetchCompleteUserDetails(userId);
+    }
+
+    @GetMapping("/fetchPlayers")
+    public List<Player> fetchPlayers(){
+        return userService.fetchPlayers();
+    }
+
+    @GetMapping("/predictionPointsTable")
+    public List<PointsTableResponse> fetchPredictionPointsTable(){
+        return userService.fetchPredictionPointsTable();
+    }
+
+    @GetMapping("/fantasyPointsTable")
+    public List<PointsTableResponse> fetchFantasyPointsTable(){
+        return userService.fetchFantasyPointsTable();
     }
 
 

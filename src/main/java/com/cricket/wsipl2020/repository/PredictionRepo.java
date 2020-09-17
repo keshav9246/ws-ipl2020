@@ -32,11 +32,15 @@ public interface PredictionRepo extends CrudRepository<Prediction, PredictionPK>
     Integer checkPrediction(@Param("gameNum") Integer gameNum, @Param("userId")String userId);
 
 
-    @Query(value = "Select new com.cricket.wsipl2020.dto.PredictionPointsDTO (u.playId, p.predictionPK.gameNum,p.predictionPK.userId, s.team1, s.team2, s.winningTeam, p.prediction, s.maxPoints, p.pointsGained)  from Prediction p\n" +
+    @Query(value = "Select new com.cricket.wsipl2020.dto.PredictionPointsDTO (p.predictionPK.gameNum,p.predictionPK.userId, s.team1, s.team2, s.winningTeam, p.prediction, s.maxPoints, p.pointsGained)  from Prediction p\n" +
             "inner JOIN Schedule s on s.gameNum = p.predictionPK.gameNum\n" +
-            "inner Join User u on u.userId = p.predictionPK.userId\n" +
-            "where u.playId = (Select u.playId from User u where u.userId = :userId)")
-    List<PredictionPointsDTO> fetchPredictionList(@Param("userId") String userId);
+            "inner Join User u on u.userId = p.predictionPK.userId")
+    List<PredictionPointsDTO> fetchPredictionList();
+
+    @Query(value = "Select new com.cricket.wsipl2020.dto.PredictionPointsDTO (p.predictionPK.gameNum,p.predictionPK.userId, s.team1, s.team2, s.winningTeam, p.prediction, s.maxPoints, p.pointsGained)  from Prediction p\n" +
+            "inner JOIN Schedule s on s.gameNum = p.predictionPK.gameNum\n" +
+            "inner Join User u on u.userId = p.predictionPK.userId where p.predictionPK.userId = :userId")
+    List<PredictionPointsDTO> fetchPredictionsByUser(@Param("userId") String userId);
 
     @Query( value = "Select user_id from prediction where game_num = :gameNum and prediction = :winningTeam", nativeQuery = true)
     List<String> fetchWinningUsers(@Param("gameNum") Integer gameNum, @Param("winningTeam") String winningTeam);

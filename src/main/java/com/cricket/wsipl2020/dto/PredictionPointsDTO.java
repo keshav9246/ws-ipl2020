@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter @Setter
 @AllArgsConstructor
 public class PredictionPointsDTO {
-    private Integer playId;
     private Integer gameNum;
     private String userId;
     private String team1;
