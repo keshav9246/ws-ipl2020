@@ -5,6 +5,7 @@ import com.cricket.wsipl2020.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +49,12 @@ public class UserService {
 
         List<Schedule> predictionEligibleGames =  new ArrayList<>();
 
-        System.out.print(LocalDate.now());
+        System.out.println(LocalDate.now());
+        System.out.println(LocalDateTime.now());
         List<Schedule> gamesToday = scheduleRepo.getGameByDate(LocalDate.now());
 
         for(Schedule game : gamesToday) {
-            System.out.println(game.getGameTime()+"  "+LocalTime.now().plusMinutes(90));
+            System.out.println(LocalTime.now().plusMinutes(90)+"--- "+game.getGameTime().toLocalTime());
             if((LocalTime.now().plusMinutes(90).isBefore(game.getGameTime().toLocalTime())))
             {
                 predictionEligibleGames.add(game);
@@ -151,14 +153,12 @@ public class UserService {
          dailyPlayerPointsRepo.save(dailyPlayerPoints);
 
          //fetch all users.userName where powerplayer = ""
-
-
         // playername - checck users with thihs player as power player -keshav
        // List<String> ppUserIds = playerRepo.fetchPowerPlayer(playerScore.getScorePK().getPlayerName());
-        List<String> userIdssPP = userRepo.fetchUserIdsPP(playerScore.getScorePK().getPlayerName());
+        List<String> userIdsPP = userRepo.fetchUserIdsPP(playerScore.getScorePK().getPlayerName());
 
-        if(userIdssPP!=null){
-            userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),userIdssPP);
+        if(userIdsPP!=null){
+            userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),userIdsPP);
 
         }
 

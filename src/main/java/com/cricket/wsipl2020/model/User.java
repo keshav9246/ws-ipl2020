@@ -12,12 +12,10 @@ import java.util.List;
 @Component
 public class User {
 
-    private Integer playId;
     @Id
     private String userId;
     private String userName;
     private Float predictionScore;
-    private String userRole;
     @ManyToMany
     private List<Player> mainTeam;
     private String powerPlayer;
@@ -27,9 +25,5 @@ public class User {
     private String orangeCap;
     private String purpleCap;
     private Float dream18Score;
-
-
-
-
 
 }
