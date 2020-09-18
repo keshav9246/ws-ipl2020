@@ -91,10 +91,20 @@ public class UserController {
         return userService.fetchPredictionPointsTable();
     }
 
+//    @GetMapping("/myPredictionPoints")
+//    public PointsTableResponse fetchMyPredictionPoints(){
+//        return userService.fetchPredictionPointsTable();
+//    }
+
     @GetMapping("/fantasyPointsTable")
     public List<PointsTableResponse> fetchFantasyPointsTable(){
         return userService.fetchFantasyPointsTable();
     }
+
+//    @GetMapping("/myPredictionPoints")
+//    public PointsTableResponse fetcchMyFantasyPoints(){
+//        return userService.fetchPredictionPointsTable();
+//    }
 
 
 }

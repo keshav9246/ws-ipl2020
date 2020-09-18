@@ -1,5 +1,6 @@
 package com.cricket.wsipl2020.repository;
 
+import com.cricket.wsipl2020.dto.MyCurrentRankResponse;
 import com.cricket.wsipl2020.model.Player;
 import com.cricket.wsipl2020.model.PointsTableResponse;
 import com.cricket.wsipl2020.model.User;
@@ -32,8 +33,14 @@ public interface UserRepo extends CrudRepository<User, String> {
     @Query(value = "Select new com.cricket.wsipl2020.model.PointsTableResponse (u.userName, u.predictionScore) from User u order by u.predictionScore desc ")
     List<PointsTableResponse> fetchPredictionPointsTable();
 
+//    @Query(value = "Select new com.cricket.wsipl2020.dto.MyCurrentRankResponse (u.userName, u.predictionScore, (Select count u from user where u.predictionScore )) from User u where u.userId = :userId ")
+//    List<MyCurrentRankResponse> fetchMyPredictionPoints(String userId);
+
     @Query(value = "Select new com.cricket.wsipl2020.model.PointsTableResponse (u.userName, u.dream18Score) from User u order by u.dream18Score desc ")
     List<PointsTableResponse> fetchFantasyPointsTable();
+
+    @Query(value = "Select u.user_id from user u where u.power_player = :playerName",nativeQuery = true)
+    List<String> fetchUserIdsPP(@Param("playerName") String playerName);
 
 
 }

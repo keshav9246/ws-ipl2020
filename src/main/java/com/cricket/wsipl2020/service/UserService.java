@@ -97,6 +97,10 @@ public class UserService {
         return userRepo.fetchPredictionPointsTable();
     }
 
+//    public List<PointsTableResponse> fetchMyPrediccitonPoints() {
+//        return userRepo.fetchPredictionPointsTable();
+//    }
+
     public List<PointsTableResponse> fetchFantasyPointsTable() {
         return userRepo.fetchFantasyPointsTable();
     }
@@ -143,9 +147,23 @@ public class UserService {
 
 
 
+
          dailyPlayerPointsRepo.save(dailyPlayerPoints);
 
+         //fetch all users.userName where powerplayer = ""
+
+
+        // playername - checck users with thihs player as power player -keshav
+       // List<String> ppUserIds = playerRepo.fetchPowerPlayer(playerScore.getScorePK().getPlayerName());
+        List<String> userIdssPP = userRepo.fetchUserIdsPP(playerScore.getScorePK().getPlayerName());
+
+        if(userIdssPP!=null){
+            userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),userIdssPP);
+
+        }
+
          userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),playerScore.getUserIds());
+
          playerRepo.updatePlayerScore(playerScore.getScorePK().getPlayerName(), dailyPlayerPoints.getTotalGamePoints());
 
 

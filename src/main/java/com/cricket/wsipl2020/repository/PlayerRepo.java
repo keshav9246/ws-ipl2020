@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface PlayerRepo extends CrudRepository<Player, String> {
@@ -18,4 +19,9 @@ public interface PlayerRepo extends CrudRepository<Player, String> {
 
     @Query(value = "Select player_role from player where player_name = :playerName", nativeQuery = true)
      String getPlayerRole (@Param("playerName") String playerName);
+
+//    @Query(value = "Select p.powerPlayerFor from Player p where p.player_name = :playerName")
+//    List<String> fetchPowerPlayer(@Param("playerName") String playerName);
+
+
 }

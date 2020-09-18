@@ -16,9 +16,9 @@ public class Player {
     private Float score;
     private String playerRole;
     private boolean isCaptain;
-    @ManyToMany
-    private List<User> OwnedBy;
-    @OneToMany
-    private List<User> powerPlayerFor;
+//    @ManyToMany
+//    private List<User> OwnedBy;
+//    @OneToMany (mappedBy = "player")
+//    private List<User> powerPlayerFor;
 
 }

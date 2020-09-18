@@ -20,12 +20,14 @@ public class User {
     private String userRole;
     @ManyToMany
     private List<Player> mainTeam;
+    private String powerPlayer;
     @ManyToMany
     private List<Player> backupTeam;
     private String qualifyingTeams;
     private String orangeCap;
     private String purpleCap;
     private Float dream18Score;
+
 
 
 
