@@ -54,8 +54,8 @@ public class UserService {
         List<Schedule> gamesToday = scheduleRepo.getGameByDate(LocalDate.now());
 
         for(Schedule game : gamesToday) {
-            System.out.println(LocalTime.now().plusMinutes(90)+"--- "+game.getGameTime().toLocalTime());
-            if((LocalTime.now().plusMinutes(90).isBefore(game.getGameTime().toLocalTime())))
+            System.out.println(LocalTime.now()+"--- "+game.getGameTime().toLocalTime().minusMinutes(90));
+            if((LocalTime.now().isBefore(game.getGameTime().toLocalTime().minusMinutes(90))))
             {
                 predictionEligibleGames.add(game);
             }
