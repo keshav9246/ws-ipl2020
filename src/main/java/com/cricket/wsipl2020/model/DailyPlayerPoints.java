@@ -1,5 +1,6 @@
 package com.cricket.wsipl2020.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ public class DailyPlayerPoints {
 //    private Integer foursHit;
 //    private Integer sixesHit;
     private Float strikeRate;
-    private Boolean isNotout;
+    private String wasNO;
     private Float runsPoints ;
     private Float foursPoints ;
     private Integer sixesPoints ;
@@ -48,5 +49,6 @@ public class DailyPlayerPoints {
 
 
     private Float totalGamePoints;
+    private String assignedTo;
 
 }

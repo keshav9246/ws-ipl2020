@@ -140,12 +140,19 @@ public class UserService {
                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings());
 
         String role = playerRepo.getPlayerRole(playerScore.getScorePK().getPlayerName());
+
+
+
                 DailyPlayerPoints dailyPlayerPoints = calculateTotalPoints(playerScore.getRunsScored(), playerScore.getBallsFaced(), playerScore.getFoursHit(), playerScore.getSixesHit(), playerScore.getIsNotout(),
                  playerScore.getBallsBowled(), playerScore.getRunsConceded(), playerScore.getWicketsTaken(),playerScore.getBwldLbwCnb(), playerScore.getMaidenOvers(),playerScore.getHatricks(),
-                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings(), role);
+                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings(), role,playerScore.getUserIds());
 
         DailyPlayerPointsPK dailyPlayerPointsPK = new DailyPlayerPointsPK( playerScore.getScorePK().getGameNum(),playerScore.getScorePK().getPlayerName());
         dailyPlayerPoints.setDailyPlayerPointsPK(dailyPlayerPointsPK);
+
+        System.out.println( dailyPlayerPoints.getWasNO());
+
+
 
 
 
@@ -156,6 +163,14 @@ public class UserService {
         // playername - checck users with thihs player as power player -keshav
        // List<String> ppUserIds = playerRepo.fetchPowerPlayer(playerScore.getScorePK().getPlayerName());
         List<String> userIdsPP = userRepo.fetchUserIdsPP(playerScore.getScorePK().getPlayerName());
+
+        System.out.println(userIdsPP.size());
+        if(userIdsPP.size() > 0) {
+            for (String s : userIdsPP) {
+                System.out.println(s);
+            }
+        }
+
 
         if(userIdsPP!=null){
             userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),userIdsPP);
@@ -172,7 +187,7 @@ public class UserService {
 
     public DailyPlayerPoints calculateTotalPoints(Integer runsScored, Integer balls, Integer fours, Integer sixes, Boolean isNO,
                                                   Integer ballsBowled, Integer runsGiven, Integer wickets, Integer bwldLb, Integer maidens,Integer hatrick,
-                                                  Integer catches, Integer directHits, Integer stumpings, String role){
+                                                  Integer catches, Integer directHits, Integer stumpings, String role, List<String> userIds){
 
         DailyPlayerPoints dailyPlayerPoints = new DailyPlayerPoints();
         Float runsPoints = 0.0f;
@@ -184,13 +199,19 @@ public class UserService {
         Integer fieldingPoints = 0;
         Float strikeRate = 0.0f;
         Integer strikeRateBonus = 0;
+        Integer wicketPoints = 0;
+                Integer economyBonus = 0;
+                Integer hatrickBonus =0;
+                Integer maidenOverBonus =0;
+                Integer lbwOrBldPoints=0;
+        Float economy = 0.0f;
 
 
         if(runsScored == 0 && isNO == false) {
             runsPoints = runsPoints - 5;
 
         }
-        else{
+        else if (runsScored > 0){
             runsPoints = runsScored * 0.5f;
             strikeRate = (runsScored * 100.0f )/ balls;
 
@@ -227,13 +248,13 @@ public class UserService {
             }
         }
 
-        if(runsScored > 100){
+        if(runsScored >= 100){
             runsBonus = runsBonus + 10;
         }
-        else if(runsScored > 50){
+        else if(runsScored >= 50 && runsScored <100){
             runsBonus = runsBonus + 5;
         }
-        else if(runsScored > 30){
+        else if(runsScored >= 30 && runsScored < 50){
             runsBonus = runsBonus + 3;
         }
 
@@ -243,53 +264,45 @@ public class UserService {
         }
 
 
+        if(ballsBowled > 0) {
 
-        Integer wicketPoints = wickets * 10;
-        Integer lbwOrBldPoints = bwldLb * 4;
+             wicketPoints = wickets * 10;
+             lbwOrBldPoints = bwldLb * 4;
 
 
-        if(wickets >= 3 && wickets < 5){
-            wicketPoints = wicketPoints + 4;
-        }
-        else if(wickets == 5){
-            wicketPoints = wicketPoints + 8;
-        }
-        else if (wickets > 5){
-            wicketPoints = wicketPoints + 10;
-        }
+            if (wickets >= 3 && wickets < 5) {
+                wicketPoints = wicketPoints + 4;
+            } else if (wickets == 5) {
+                wicketPoints = wicketPoints + 8;
+            } else if (wickets > 5) {
+                wicketPoints = wicketPoints + 10;
+            }
 
-        Integer hatrickBonus = hatrick * 10;
-        Integer maidenOverBonus = maidens * 3;
+             hatrickBonus = hatrick * 10;
+             maidenOverBonus = maidens * 3;
 
-        Float economy = ((runsGiven * 6.0f) /ballsBowled);
-        Integer economyBonus = 0;
-        if(ballsBowled >= 12) {
-            if (economy >= 5 && economy <6){
-                economyBonus = economyBonus + 2;
-            }
-            else if (economy >= 4 && economy <5){
-                economyBonus = economyBonus + 3;
-            }
-            else if (economy <4){
-                economyBonus = economyBonus + 5;
-            }
-            else if (economy >=9 && economy <10){
-                economyBonus = economyBonus - 2;
-            }
-            else if (economy >=10 && economy <11){
-                economyBonus = economyBonus - 3;
-            }
-            else if (economy >=11 && economy <13){
-                economyBonus = economyBonus - 5;
-            }
-            else if (economy >=13 && economy <15){
-                economyBonus = economyBonus - 8;
-            }
-            else if (economy >=15){
-                economyBonus = economyBonus - 10;
+             economy = ((runsGiven * 6.0f) / ballsBowled);
+             economyBonus = 0;
+            if (ballsBowled >= 12) {
+                if (economy >= 5 && economy < 6) {
+                    economyBonus = economyBonus + 2;
+                } else if (economy >= 4 && economy < 5) {
+                    economyBonus = economyBonus + 3;
+                } else if (economy < 4) {
+                    economyBonus = economyBonus + 5;
+                } else if (economy >= 9 && economy < 10) {
+                    economyBonus = economyBonus - 2;
+                } else if (economy >= 10 && economy < 11) {
+                    economyBonus = economyBonus - 3;
+                } else if (economy >= 11 && economy < 13) {
+                    economyBonus = economyBonus - 5;
+                } else if (economy >= 13 && economy < 15) {
+                    economyBonus = economyBonus - 8;
+                } else if (economy >= 15) {
+                    economyBonus = economyBonus - 10;
+                }
             }
         }
-
 
         Integer catchesPoints = catches * 4;
         Integer stumpingPoints = stumpings * 6;
@@ -308,7 +321,7 @@ public class UserService {
         dailyPlayerPoints.setRunsPoints(runsPoints);
         dailyPlayerPoints.setFoursPoints(foursPoints);
         dailyPlayerPoints.setSixesPoints(sixesPoints);
-        dailyPlayerPoints.setIsNotout(isNO);
+        dailyPlayerPoints.setWasNO(isNO == true ? "YES" : "NO");
         dailyPlayerPoints.setRunsBonus(runsBonus);
         dailyPlayerPoints.setStrikeRate(strikeRate);
         dailyPlayerPoints.setStrikeRateBonus(strikeRateBonus);
@@ -331,10 +344,36 @@ public class UserService {
         dailyPlayerPoints.setFieldingPoints(fieldingPoints);
 
         dailyPlayerPoints.setTotalGamePoints(totalGamePoints);
+        dailyPlayerPoints.setAssignedTo(idsToString(userIds));
 
         return dailyPlayerPoints;
 
     }
+
+
+    private static String idsToString(List<String> userIds){
+
+        String out = "";
+        for(String userId: userIds){
+            System.out.println(userId);
+            String[] name = userId.split("@");
+            System.out.println(name[0]);
+           out = out + name[0] + " - ";
+        }
+
+        return out;
+    }
+
+//    public static void main(String[] args){
+//        List<String> ids = new ArrayList<>();
+//        ids.add("akash@hmail.com");
+//        ids.add("abssdf@yahoomail.com");
+//        ids.add("tanmas@kiasda.com");
+//
+//        System.out.println("response: "+idsToString(ids));
+//
+//
+//    }
 
 
 
