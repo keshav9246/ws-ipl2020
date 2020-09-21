@@ -150,12 +150,6 @@ public class UserService {
         DailyPlayerPointsPK dailyPlayerPointsPK = new DailyPlayerPointsPK( playerScore.getScorePK().getGameNum(),playerScore.getScorePK().getPlayerName());
         dailyPlayerPoints.setDailyPlayerPointsPK(dailyPlayerPointsPK);
 
-        System.out.println( dailyPlayerPoints.getWasNO());
-
-
-
-
-
 
          dailyPlayerPointsRepo.save(dailyPlayerPoints);
 

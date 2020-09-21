@@ -34,12 +34,12 @@ public interface PredictionRepo extends CrudRepository<Prediction, PredictionPK>
 
     @Query(value = "Select new com.cricket.wsipl2020.dto.PredictionPointsDTO (p.predictionPK.gameNum,p.predictionPK.userId, s.team1, s.team2, s.winningTeam, p.prediction, s.maxPoints, p.pointsGained)  from Prediction p\n" +
             "inner JOIN Schedule s on s.gameNum = p.predictionPK.gameNum\n" +
-            "inner Join User u on u.userId = p.predictionPK.userId order by p.predictionPK.gameNum")
+            "inner Join User u on u.userId = p.predictionPK.userId order by p.predictionPK.gameNum DESC")
     List<PredictionPointsDTO> fetchPredictionList();
 
     @Query(value = "Select new com.cricket.wsipl2020.dto.PredictionPointsDTO (p.predictionPK.gameNum,p.predictionPK.userId, s.team1, s.team2, s.winningTeam, p.prediction, s.maxPoints, p.pointsGained)  from Prediction p\n" +
             "inner JOIN Schedule s on s.gameNum = p.predictionPK.gameNum\n" +
-            "inner Join User u on u.userId = p.predictionPK.userId where p.predictionPK.userId = :userId order by p.predictionPK.gameNum")
+            "inner Join User u on u.userId = p.predictionPK.userId where p.predictionPK.userId = :userId order by p.predictionPK.gameNum DESC")
     List<PredictionPointsDTO> fetchPredictionsByUser(@Param("userId") String userId);
 
     @Query( value = "Select user_id from prediction where game_num = :gameNum and prediction = :winningTeam", nativeQuery = true)
