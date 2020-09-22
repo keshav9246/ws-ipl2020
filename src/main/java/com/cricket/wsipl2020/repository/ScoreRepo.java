@@ -18,6 +18,8 @@ public interface ScoreRepo extends CrudRepository<Score, ScorePK> {
                             @Param("ballsBowled") Integer ballsBowled, @Param("runsGiven") Integer runsGiven, @Param("wickets") Integer wickets, @Param("bwldLb") Integer bwldLb, @Param("maidens") Integer maidens, @Param("hatrick") Integer hatrick,
                             @Param("catches") Integer catches, @Param("directHits") Integer directHits, @Param("stumpings") Integer stumpings);
 
+    @Query(value = "Select s from Score s order by s.scorePK.gameNum DESC")
+    List<Score> fetchScores();
 
 
 //    private Integer runsScored;

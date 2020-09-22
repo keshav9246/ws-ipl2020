@@ -85,7 +85,7 @@ public class UserService {
     }
 
     public List<Score> fetchDailyScores(){
-        return (List<Score>)scoreRepo.findAll();
+        return scoreRepo.fetchScores();
     }
 
     public List<DailyPlayerPoints> fetchDailyFantasyPoints(){
