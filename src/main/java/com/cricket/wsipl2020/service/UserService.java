@@ -89,7 +89,8 @@ public class UserService {
     }
 
     public List<DailyPlayerPoints> fetchDailyFantasyPoints(){
-        return (List<DailyPlayerPoints>) dailyPlayerPointsRepo.findAll();
+        //return (List<DailyPlayerPoints>) dailyPlayerPointsRepo.findAll();
+        return dailyPlayerPointsRepo.fetchDailyPlayerPoints();
     }
 
     public List<Player> fetchPlayers(){
@@ -349,19 +350,47 @@ public class UserService {
 
         String out = "";
         for(String userId: userIds){
-            System.out.println(userId);
-            String[] name = userId.split("@");
-            System.out.println(name[0]);
-           out = out + name[0] + " - ";
+            if (userId.equals("Aakashdhoot.ad@gmail.com")){
+                out = out +" -"+ "Aksh" ;
+            }
+            else if (userId.equals( "Deepak.kotwani29@gmail.com")){
+                out = out +" -"+ "Dipu";
+            }else if (userId.equals("devpandya_0072@yahoo.in")){
+                out = out + " -"+"Devng";
+            }else if (userId.equals("dhruvikp27@gmail.com")){
+                out = out + " -"+"Dhrvk";
+            }else if (userId.equals("harsh242bme@gmail.com")){
+                out = out + " -"+"Lakhn";
+            }else if (userId.equals("lmcp.sachin@gmail.com")){
+                out = out + " -"+"Sachn";
+            }else if (userId.equals("ksrajput@asu.edu")){
+                out = out +" -"+ "Kshav";
+            }else if (userId.equals("photowalktd@icloud.com")){
+                out = out +" -"+ "Tnmy";
+            }else if (userId.equals("prthtalele1@gmail.com")){
+                out = out + " -"+"Prth";
+            }else if (userId.equals("sagarpatel2804@gmail.com")){
+                out = out +" -"+ "Sagr";
+            }else if (userId.equals("Sid.pandya8@gmail.com")){
+                out = out +" -"+ "Sid";
+            }else if (userId.equals("swapnilelec@gmail.com")){
+                out = out +" -"+ "Swpnl";
+            }else{
+                out = out+"";
+            }
+
+
+
+
         }
 
         return out;
     }
-
+//
 //    public static void main(String[] args){
 //        List<String> ids = new ArrayList<>();
-//        ids.add("akash@hmail.com");
-//        ids.add("abssdf@yahoomail.com");
+//        ids.add("photowalktd@icloud.com");
+//        ids.add("swapnilelec@gmail.com");
 //        ids.add("tanmas@kiasda.com");
 //
 //        System.out.println("response: "+idsToString(ids));
