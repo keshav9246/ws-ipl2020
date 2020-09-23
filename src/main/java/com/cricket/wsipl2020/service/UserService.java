@@ -141,12 +141,13 @@ public class UserService {
                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings());
 
         String role = playerRepo.getPlayerRole(playerScore.getScorePK().getPlayerName());
+        Boolean isCaptain = playerRepo.checkIfCaptain(playerScore.getScorePK().getPlayerName());
 
 
 
                 DailyPlayerPoints dailyPlayerPoints = calculateTotalPoints(playerScore.getRunsScored(), playerScore.getBallsFaced(), playerScore.getFoursHit(), playerScore.getSixesHit(), playerScore.getIsNotout(),
                  playerScore.getBallsBowled(), playerScore.getRunsConceded(), playerScore.getWicketsTaken(),playerScore.getBwldLbwCnb(), playerScore.getMaidenOvers(),playerScore.getHatricks(),
-                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings(), role,playerScore.getUserIds());
+                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings(), role,playerScore.getUserIds(), isCaptain);
 
         DailyPlayerPointsPK dailyPlayerPointsPK = new DailyPlayerPointsPK( playerScore.getScorePK().getGameNum(),playerScore.getScorePK().getPlayerName());
         dailyPlayerPoints.setDailyPlayerPointsPK(dailyPlayerPointsPK);
@@ -178,7 +179,7 @@ public class UserService {
 
     public DailyPlayerPoints calculateTotalPoints(Integer runsScored, Integer balls, Integer fours, Integer sixes, Boolean isNO,
                                                   Integer ballsBowled, Integer runsGiven, Integer wickets, Integer bwldLb, Integer maidens,Integer hatrick,
-                                                  Integer catches, Integer directHits, Integer stumpings, String role, List<String> userIds){
+                                                  Integer catches, Integer directHits, Integer stumpings, String role, List<String> userIds, Boolean isCaptain){
 
         DailyPlayerPoints dailyPlayerPoints = new DailyPlayerPoints();
         Float runsPoints = 0.0f;
@@ -303,7 +304,9 @@ public class UserService {
         bowlingPoints = wicketPoints + economyBonus + hatrickBonus + maidenOverBonus + lbwOrBldPoints;
         fieldingPoints = catchesPoints + stumpingPoints + directHitPoints;
         Float totalGamePoints = battingPoints + bowlingPoints + fieldingPoints;
-        if(role.equals("Captain")){
+        System.out.println(isCaptain);
+        if(isCaptain == true){
+            System.out.println("inside captaincy");
             totalGamePoints = totalGamePoints * 1.5F;
         }
 

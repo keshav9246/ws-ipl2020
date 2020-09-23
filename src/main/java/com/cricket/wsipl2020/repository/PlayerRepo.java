@@ -20,6 +20,9 @@ public interface PlayerRepo extends CrudRepository<Player, String> {
     @Query(value = "Select player_role from player where player_name = :playerName", nativeQuery = true)
      String getPlayerRole (@Param("playerName") String playerName);
 
+    @Query(value = "Select is_captain from player where player_name = :playerName", nativeQuery = true)
+    Boolean checkIfCaptain (@Param("playerName") String playerName);
+
 //    @Query(value = "Select p.powerPlayerFor from Player p where p.player_name = :playerName")
 //    List<String> fetchPowerPlayer(@Param("playerName") String playerName);
 
