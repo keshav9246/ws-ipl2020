@@ -159,12 +159,6 @@ public class UserService {
        // List<String> ppUserIds = playerRepo.fetchPowerPlayer(playerScore.getScorePK().getPlayerName());
         List<String> userIdsPP = userRepo.fetchUserIdsPP(playerScore.getScorePK().getPlayerName());
 
-        System.out.println(userIdsPP.size());
-        if(userIdsPP.size() > 0) {
-            for (String s : userIdsPP) {
-                System.out.println(s);
-            }
-        }
 
 
         if(userIdsPP!=null){
@@ -173,9 +167,8 @@ public class UserService {
         }
 
          userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),playerScore.getUserIds());
-        String totalPoints = dailyPlayerPoints.getTotalGamePoints() > 0 ? dailyPlayerPoints.getTotalGamePoints().toString().toString():"("+dailyPlayerPoints.getTotalGamePoints().toString().toString()+")";
-        String score =","+ playerScore.getScorePK().getGameNum()+"-".concat(totalPoints);
-        System.out.println(score);
+        String totalPoints = "("+dailyPlayerPoints.getTotalGamePoints().toString()+")";
+        String score =","+ playerScore.getScorePK().getGameNum().toString().concat(totalPoints);
 
          playerRepo.updatePlayerScore(playerScore.getScorePK().getPlayerName(), dailyPlayerPoints.getTotalGamePoints(),score);
 
