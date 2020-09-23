@@ -24,6 +24,7 @@ public class User {
     private String qualifyingTeams;
     private String orangeCap;
     private String purpleCap;
+    private String winningTeam;
     private Float dream18Score;
 
 }

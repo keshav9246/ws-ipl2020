@@ -173,8 +173,11 @@ public class UserService {
         }
 
          userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),playerScore.getUserIds());
+        String totalPoints = dailyPlayerPoints.getTotalGamePoints() > 0 ? dailyPlayerPoints.getTotalGamePoints().toString().toString():"("+dailyPlayerPoints.getTotalGamePoints().toString().toString()+")";
+        String score =","+ playerScore.getScorePK().getGameNum()+"-".concat(totalPoints);
+        System.out.println(score);
 
-         playerRepo.updatePlayerScore(playerScore.getScorePK().getPlayerName(), dailyPlayerPoints.getTotalGamePoints());
+         playerRepo.updatePlayerScore(playerScore.getScorePK().getPlayerName(), dailyPlayerPoints.getTotalGamePoints(),score);
 
 
 

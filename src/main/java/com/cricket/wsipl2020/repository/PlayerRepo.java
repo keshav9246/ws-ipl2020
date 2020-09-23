@@ -14,8 +14,8 @@ import java.util.List;
 public interface PlayerRepo extends CrudRepository<Player, String> {
 
     @Modifying @Transactional
-    @Query(value = "Update player set score = score + :dailyPlayerPoints where player_name = :playerName", nativeQuery = true)
-     void updatePlayerScore(@Param("playerName") String playerName, @Param("dailyPlayerPoints") Float dailyPlayerPoints);
+    @Query(value = "Update player set score = score + :dailyPlayerPoints , string_of_scores = CONCAT(string_of_scores, :score) where player_name = :playerName", nativeQuery = true)
+     void updatePlayerScore(@Param("playerName") String playerName, @Param("dailyPlayerPoints") Float dailyPlayerPoints,  @Param("score") String score);
 
     @Query(value = "Select player_role from player where player_name = :playerName", nativeQuery = true)
      String getPlayerRole (@Param("playerName") String playerName);

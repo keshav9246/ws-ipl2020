@@ -16,6 +16,7 @@ public class Player {
     private Float score;
     private String playerRole;
     private boolean isCaptain;
+    private String stringOfScores = "";
 //    @ManyToMany
 //    private List<User> OwnedBy;
 //    @OneToMany (mappedBy = "player")
