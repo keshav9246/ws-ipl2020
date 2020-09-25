@@ -94,7 +94,7 @@ public class UserService {
     }
 
     public List<Player> fetchPlayers(){
-        return (List<Player>) playerRepo.findAll();
+        return  playerRepo.fetchPlayers();
     }
     public List<PointsTableResponse> fetchPredictionPointsTable() {
         return userRepo.fetchPredictionPointsTable();
@@ -200,7 +200,14 @@ public class UserService {
 
 
         if(runsScored == 0 && isNO == false) {
+            System.out.println("ROLE:" +role);
+            if(role.equals("Fast-Bowler") || role.equals("Spinner")){
+                System.out.println("ROLE:" +role);
+                runsPoints = runsPoints - 2;
+            }
+            else{
             runsPoints = runsPoints - 5;
+            }
 
         }
         else if (runsScored > 0){
