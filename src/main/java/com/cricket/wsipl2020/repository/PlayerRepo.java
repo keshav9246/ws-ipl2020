@@ -23,7 +23,7 @@ public interface PlayerRepo extends CrudRepository<Player, String> {
     @Query(value = "Select is_captain from player where player_name = :playerName", nativeQuery = true)
     Boolean checkIfCaptain (@Param("playerName") String playerName);
 
-    @Query(value = "Select * from player ORDER BY score DESC", nativeQuery = true)
+    @Query(value = "Select * from player where score != 0 ORDER BY score DESC", nativeQuery = true)
     List<Player> fetchPlayers();
 
 //    @Query(value = "Select p.powerPlayerFor from Player p where p.player_name = :playerName")
