@@ -31,6 +31,10 @@ public class UserService {
 
     @Autowired
     PlayerRepo playerRepo;
+
+    @Autowired
+    AllocationsRepo allocationsRepo;
+
 //    public boolean authenticate(String userName, String pwd) {
 //        User user =  userRepo.getUser(userName);
 //        if (user.getPwd().equals(pwd)) {
@@ -133,6 +137,10 @@ public class UserService {
         return predictionRepo.fetchPredictionsByUser(userId);
     }
 
+    public List<Allocations> fetchAllocations(){
+        return allocationsRepo.fetchAllocations();
+    }
+
     public void submitScore(Score playerScore){
 
          scoreRepo.submitScore(playerScore.getScorePK().getGameNum(), playerScore.getScorePK().getPlayerName(),
@@ -168,6 +176,12 @@ public class UserService {
         }
 
          userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),playerScore.getUserIds());
+        for(String user : playerScore.getUserIds()){
+            String id = idToString(user);
+            System.out.println(user);
+            allocationsRepo.addAllocation(playerScore.getScorePK().getGameNum(),id,playerScore.getScorePK().getPlayerName(),dailyPlayerPoints.getTotalGamePoints());
+        }
+
         String totalPoints = "("+dailyPlayerPoints.getTotalGamePoints().toString()+")";
         String score =","+ playerScore.getScorePK().getGameNum().toString().concat(totalPoints);
 
@@ -384,13 +398,44 @@ public class UserService {
             }else{
                 out = out+"";
             }
-
-
-
-
         }
 
         return out;
+    }
+
+    private static String idToString(String userId){
+
+
+            if (userId.equals("Aakashdhoot.ad@gmail.com")){
+                return "Akash" ;
+            }
+            else if (userId.equals( "Deepak.kotwani29@gmail.com")){
+                return "Deepu";
+            }else if (userId.equals("devpandya_0072@yahoo.in")){
+                return "Devang";
+            }else if (userId.equals("dhruvikp27@gmail.com")){
+                return "Dhruvik";
+            }else if (userId.equals("harsh242bme@gmail.com")){
+                return "Lakhan";
+            }else if (userId.equals("lmcp.sachin@gmail.com")){
+                return "Sachin";
+            }else if (userId.equals("ksrajput@asu.edu")){
+                return "Keshav";
+            }else if (userId.equals("photowalktd@icloud.com")){
+                return "Tanmay";
+            }else if (userId.equals("prthtalele1@gmail.com")){
+                return "Parth";
+            }else if (userId.equals("sagarpatel2804@gmail.com")){
+                return "Sagar";
+            }else if (userId.equals("Sid.pandya8@gmail.com")){
+                return "Sid";
+            }else if (userId.equals("swapnilelec@gmail.com")){
+                return "Swapnil";
+            }else if (userId.equals("abc@gmail.com")){
+                return "Sample";
+            }else{
+                return "";
+            }
     }
 //
 //    public static void main(String[] args){

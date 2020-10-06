@@ -101,6 +101,9 @@ public class UserController {
         return userService.fetchFantasyPointsTable();
     }
 
+    @GetMapping("/allocations")
+    public List<Allocations> getAllocations(){ return  userService.fetchAllocations();}
+
 //    @GetMapping("/myPredictionPoints")
 //    public PointsTableResponse fetcchMyFantasyPoints(){
 //        return userService.fetchPredictionPointsTable();
