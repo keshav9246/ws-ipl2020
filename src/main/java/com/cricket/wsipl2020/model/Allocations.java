@@ -11,8 +11,7 @@ import javax.persistence.Entity;
 public class Allocations {
 
     @EmbeddedId
-    PredictionPK allocationsPK;
-    String playerName;
+    AllocationsPK allocationsPK;
     Float points;
 
 }
