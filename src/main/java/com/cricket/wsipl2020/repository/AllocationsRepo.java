@@ -16,7 +16,7 @@ public interface AllocationsRepo extends CrudRepository<Allocations,PredictionPK
 
     @Transactional @Modifying
     @Query(value = "Insert into allocations values(:gameNum, :userName, :playerName, :score)", nativeQuery = true)
-    public void addAllocation(@Param("gameNum") Integer gameNum,@Param("playerName") String playerName,@Param("userName") String userName,@Param("score") Float score);
+    public void addAllocation(@Param("gameNum") Integer gameNum, @Param("userName") String userName,@Param("playerName") String playerName,@Param("score") Float score);
 
 
     @Query(value = "Select a from Allocations a order by a.allocationsPK.gameNum DESC")
