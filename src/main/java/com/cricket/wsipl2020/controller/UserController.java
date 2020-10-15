@@ -5,6 +5,9 @@ import com.cricket.wsipl2020.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -44,9 +47,12 @@ public class UserController {
     }
 
     @GetMapping("/getPredictions")
-    public List<PredictionPointsDTO> fetchPredictions()
-    {
+    public List<PredictionPointsDTO> fetchPredictions() {
+        LocalDateTime limit = LocalDateTime.of(LocalDate.now(),LocalTime.of(12,30,00));
+//        if(LocalDateTime.now().isBefore(limit))
+//        {
         return  userService.fetchPredictions();
+        //}
     }
 
     @GetMapping("/myPredictions")

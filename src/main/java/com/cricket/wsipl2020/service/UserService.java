@@ -130,7 +130,29 @@ public class UserService {
     }
 
     public List<PredictionPointsDTO> fetchPredictions() {
-        return predictionRepo.fetchPredictionList();
+        List<PredictionPointsDTO> predList =  predictionRepo.fetchPredictionList();
+        List<PredictionPointsDTO> finalList = new ArrayList<>();
+        for(PredictionPointsDTO pred:predList){
+            PredictionPointsDTO prediction = new PredictionPointsDTO();
+            prediction.setGameNum(pred.getGameNum());
+            prediction.setMaxPoints(pred.getMaxPoints());
+            prediction.setPointsGained(pred.getPointsGained());
+            prediction.setTeam1(pred.getTeam1());
+            prediction.setTeam2(pred.getTeam2());
+            prediction.setUserId(idToString(pred.getUserId()));
+            prediction.setWinningTeam(pred.getWinningTeam());
+            //System.out.println(LocalTime.now() + "Local time ccurrent");
+            if((LocalTime.now().isBefore(LocalTime.of(18,0,0))))
+            {
+                prediction.setPrediction(null);
+
+            }
+            else{
+                prediction.setPrediction(pred.getPrediction());
+            }
+            finalList.add(prediction);
+        }
+        return finalList;
     }
 
     public List<PredictionPointsDTO> fetchPredictionsByUser(String userId) {

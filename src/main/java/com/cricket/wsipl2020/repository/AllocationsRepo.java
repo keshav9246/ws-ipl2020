@@ -20,6 +20,6 @@ public interface AllocationsRepo extends CrudRepository<Allocations,AllocationsP
     void addAllocation(@Param("gameNum") Integer gameNum, @Param("userName") String userName,@Param("playerName") String playerName,@Param("score") Float score);
 
 
-    @Query(value = "Select a from Allocations a order by a.allocationsPK.gameNum DESC")
+    @Query(value = "Select a from Allocations a order by a.allocationsPK.gameNum DESC, a.allocationsPK.userId")
     List<Allocations> fetchAllocations();
 }
