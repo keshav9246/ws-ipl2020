@@ -7,6 +7,6 @@ import lombok.Setter;
 public class MyCurrentRankResponse {
 
     private String userName;
-    private Float points;
+    private Double points;
     private Integer rank;
 }

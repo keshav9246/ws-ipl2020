@@ -15,7 +15,7 @@ public class User {
     @Id
     private String userId;
     private String userName;
-    private Float predictionScore;
+    private Double predictionScore;
     @ManyToMany
     private List<Player> mainTeam;
     private String powerPlayer;
@@ -25,6 +25,6 @@ public class User {
     private String orangeCap;
     private String purpleCap;
     private String winningTeam;
-    private Float dream18Score;
+    private Double dream18Score;
 
 }

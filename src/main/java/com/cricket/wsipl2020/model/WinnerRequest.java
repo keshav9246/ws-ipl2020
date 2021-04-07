@@ -9,5 +9,5 @@ public class WinnerRequest {
 
     private Integer gameNum;
     private String winningTeam;
-    private Float pointsEarned;
+    private Double pointsEarned;
 }

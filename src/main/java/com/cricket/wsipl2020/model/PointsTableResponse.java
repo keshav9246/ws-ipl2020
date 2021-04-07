@@ -9,5 +9,5 @@ import lombok.Setter;
 public class PointsTableResponse {
 
     private String userName;
-    private Float points;
+    private Double points;
 }

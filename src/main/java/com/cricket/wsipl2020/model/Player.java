@@ -13,7 +13,7 @@ public class Player {
     @Id
     private String player_name;
     private String team;
-    private Float score;
+    private Double score;
     private String playerRole;
     private boolean isCaptain;
     private String stringOfScores = "";

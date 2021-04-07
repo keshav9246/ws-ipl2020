@@ -27,6 +27,7 @@ public class Score {
     private Integer ballsBowled;
     private Integer runsConceded;
     private Integer wicketsTaken;
+    private Integer dots;
     private Integer bwldLbwCnb;
     private Integer maidenOvers;
     private Integer hatricks;
@@ -37,5 +38,9 @@ public class Score {
     private Integer stumpings;
 
     @Transient
-    private List<String> userIds;
+    private List<String> mainUserIds;
+    @Transient
+    private List<String> backUpUserIds;
+    @Transient
+    private List<String> rivalBackUpUserIds;
 }

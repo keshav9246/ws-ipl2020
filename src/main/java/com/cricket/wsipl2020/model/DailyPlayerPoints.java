@@ -18,27 +18,27 @@ public class DailyPlayerPoints {
     private Integer ballsFaced;
 //    private Integer foursHit;
 //    private Integer sixesHit;
-    private Float strikeRate;
+    private Double strikeRate;
     private String wasNO;
-    private Float runsPoints ;
-    private Float foursPoints ;
+    private Double runsPoints ;
+    private Double foursPoints ;
     private Integer sixesPoints ;
     private Integer runsBonus;
     private Integer strikeRateBonus;
-    private Float battingPoints;
+    private Double battingPoints;
 
     //Bowling points
 
     private Integer runsConceded;
     private Integer ballsBowled;
     private Integer wicketsTaken;
-    private Float economy;
+    private Double economy;
     private Integer wicketPoints ;
     private Integer economyBonus ;
     private Integer hatrickBonus ;
     private Integer maidenOverBonus;
     private Integer lbwOrBldPoints;
-    private Integer bowlingPoints;
+    private Double bowlingPoints;
 
 
     //fielding points
@@ -48,7 +48,7 @@ public class DailyPlayerPoints {
     private Integer fieldingPoints;
 
 
-    private Float totalGamePoints;
+    private Double totalGamePoints;
     private String assignedTo;
 
 }

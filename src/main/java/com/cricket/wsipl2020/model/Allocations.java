@@ -12,6 +12,6 @@ public class Allocations {
 
     @EmbeddedId
     AllocationsPK allocationsPK;
-    Float points;
+    Double points;
 
 }

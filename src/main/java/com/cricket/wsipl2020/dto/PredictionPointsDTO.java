@@ -15,6 +15,6 @@ public class PredictionPointsDTO {
     private String team2;
     private String winningTeam;
     private String prediction;
-    private Float maxPoints;
-    private Float pointsGained;
+    private Double maxPoints;
+    private Double pointsGained;
 }

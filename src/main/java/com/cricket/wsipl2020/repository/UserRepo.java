@@ -21,11 +21,11 @@ public interface UserRepo extends CrudRepository<User, String> {
 
     @Modifying @Transactional
     @Query(value = "Update user set prediction_score = prediction_score + :pointsEarned where user_id in (:userIds)", nativeQuery = true)
-    Integer updateUserPredictionPoints(@Param("userIds") List<String> userIds, @Param("pointsEarned") Float pointsEarned);
+    Integer updateUserPredictionPoints(@Param("userIds") List<String> userIds, @Param("pointsEarned") Double pointsEarned);
 
     @Modifying @Transactional
     @Query(value = "Update user set dream18score = dream18score + :dailyPlayerPoints where user_id in (:userIds)",nativeQuery = true)
-    void updateDailyPoints(@Param("dailyPlayerPoints") Float dailyPlayerPoints, @Param("userIds")List<String> userIds);
+    void updateDailyPoints(@Param("dailyPlayerPoints") Double dailyPlayerPoints, @Param("userIds")List<String> userIds);
 
     @Query(value = "Select u from User u where u.userId = :userId")
     List<User> fetchCompleteUserDetails(@Param("userId") String userId);

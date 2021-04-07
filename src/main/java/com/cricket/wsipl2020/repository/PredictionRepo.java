@@ -25,7 +25,7 @@ public interface PredictionRepo extends CrudRepository<Prediction, PredictionPK>
 
     @Modifying @Transactional
     @Query( value = "Update prediction set points_gained = :pointsEarned where game_num = :gameNum  and user_id in (:userIds)", nativeQuery = true)
-    void updatePoints(@Param("gameNum") Integer gameNum, @Param("userIds")List<String> userIds,@Param("pointsEarned") Float pointsEarned);
+    void updatePoints(@Param("gameNum") Integer gameNum, @Param("userIds")List<String> userIds,@Param("pointsEarned") Double pointsEarned);
 
 
     @Query( value = "Select count(*) from prediction where user_id = :userId and game_num = :gameNum", nativeQuery = true)

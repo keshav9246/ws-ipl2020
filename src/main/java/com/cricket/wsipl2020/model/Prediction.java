@@ -9,5 +9,5 @@ public class Prediction {
     @EmbeddedId
     private PredictionPK predictionPK;
     private String prediction;
-    private Float pointsGained;
+    private Double pointsGained;
 }

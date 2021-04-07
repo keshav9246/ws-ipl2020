@@ -24,6 +24,6 @@ public class Schedule {
     private String team1_votes;
     private String team2_votes;
     private String winningTeam;
-    private Float maxPoints;
+    private Double maxPoints;
 
 }

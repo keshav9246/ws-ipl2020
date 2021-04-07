@@ -1,4 +1,7 @@
 package com.cricket.wsipl2020.service;
+import com.cricket.wsipl2020.dto.BattingPoints;
+import com.cricket.wsipl2020.dto.BowlingPoints;
+import com.cricket.wsipl2020.dto.FieldingPoints;
 import com.cricket.wsipl2020.dto.PredictionPointsDTO;
 import com.cricket.wsipl2020.model.*;
 import com.cricket.wsipl2020.repository.*;
@@ -116,7 +119,7 @@ public class UserService {
     }
 
 
-        public void submitWinningTeam(Integer gameNum, String winningTeam, Float pointsEarned){
+        public void submitWinningTeam(Integer gameNum, String winningTeam, Double pointsEarned){
         String winnerExists = scheduleRepo.checkWinner(gameNum);
 
         if (winnerExists == null){
@@ -172,68 +175,116 @@ public class UserService {
 
         String role = playerRepo.getPlayerRole(playerScore.getScorePK().getPlayerName());
         Boolean isCaptain = playerRepo.checkIfCaptain(playerScore.getScorePK().getPlayerName());
-
-
+        List<String> userIds = new ArrayList<>();
+        userIds.addAll(playerScore.getMainUserIds());
+        userIds.addAll(playerScore.getBackUpUserIds());
+        userIds.addAll(playerScore.getRivalBackUpUserIds());
+        System.out.println(userIds.size());
 
                 DailyPlayerPoints dailyPlayerPoints = calculateTotalPoints(playerScore.getRunsScored(), playerScore.getBallsFaced(), playerScore.getFoursHit(), playerScore.getSixesHit(), playerScore.getIsNotout(),
-                 playerScore.getBallsBowled(), playerScore.getRunsConceded(), playerScore.getWicketsTaken(),playerScore.getBwldLbwCnb(), playerScore.getMaidenOvers(),playerScore.getHatricks(),
-                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings(), role,playerScore.getUserIds(), isCaptain);
+                 playerScore.getBallsBowled(), playerScore.getRunsConceded(), playerScore.getWicketsTaken(),playerScore.getBwldLbwCnb(), playerScore.getMaidenOvers(),playerScore.getHatricks(),playerScore.getDots(),
+                 playerScore.getCatchesTaken(), playerScore.getDirectHits(), playerScore.getStumpings(), role,userIds, isCaptain);
 
         DailyPlayerPointsPK dailyPlayerPointsPK = new DailyPlayerPointsPK( playerScore.getScorePK().getGameNum(),playerScore.getScorePK().getPlayerName());
         dailyPlayerPoints.setDailyPlayerPointsPK(dailyPlayerPointsPK);
-
-
-         dailyPlayerPointsRepo.save(dailyPlayerPoints);
+        dailyPlayerPointsRepo.save(dailyPlayerPoints);
 
          //fetch all users.userName where powerplayer = ""
-        // playername - checck users with thihs player as power player -keshav
-       // List<String> ppUserIds = playerRepo.fetchPowerPlayer(playerScore.getScorePK().getPlayerName());
+         // playername - checck users with thihs player as power player -keshav
+         // List<String> ppUserIds = playerRepo.fetchPowerPlayer(playerScore.getScorePK().getPlayerName());
         List<String> userIdsPP = userRepo.fetchUserIdsPP(playerScore.getScorePK().getPlayerName());
-
-
 
         if(userIdsPP!=null){
             userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),userIdsPP);
-
         }
-
-         userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),playerScore.getUserIds());
-        for(String user : playerScore.getUserIds()){
-            String id = idToString(user);
-            System.out.println(user);
-            allocationsRepo.addAllocation(playerScore.getScorePK().getGameNum(),id,playerScore.getScorePK().getPlayerName(),dailyPlayerPoints.getTotalGamePoints());
+        userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),playerScore.getMainUserIds());
+        if(playerScore.getMainUserIds()!=null){
+            for(String user : playerScore.getMainUserIds()){
+                String id = idToString(user);
+                System.out.println(user);
+                allocationsRepo.addAllocation(playerScore.getScorePK().getGameNum(),id,playerScore.getScorePK().getPlayerName(),dailyPlayerPoints.getTotalGamePoints());
+            }
         }
-
+        if(playerScore.getBackUpUserIds()!=null){
+            for(String user : playerScore.getBackUpUserIds()){
+                String id = idToString(user);
+                System.out.println(user);
+                allocationsRepo.addAllocation(playerScore.getScorePK().getGameNum(),id,playerScore.getScorePK().getPlayerName(),dailyPlayerPoints.getTotalGamePoints()*0.90);
+            }
+        }
+        if(playerScore.getRivalBackUpUserIds()!=null){
+            for(String user : playerScore.getRivalBackUpUserIds()){
+                String id = idToString(user);
+                System.out.println(user);
+                allocationsRepo.addAllocation(playerScore.getScorePK().getGameNum(),id,playerScore.getScorePK().getPlayerName(),dailyPlayerPoints.getTotalGamePoints()*0.50);
+            }
+        }
         String totalPoints = "("+dailyPlayerPoints.getTotalGamePoints().toString()+")";
         String score =","+ playerScore.getScorePK().getGameNum().toString().concat(totalPoints);
-
-         playerRepo.updatePlayerScore(playerScore.getScorePK().getPlayerName(), dailyPlayerPoints.getTotalGamePoints(),score);
-
-
-
+        playerRepo.updatePlayerScore(playerScore.getScorePK().getPlayerName(), dailyPlayerPoints.getTotalGamePoints(),score);
     }
 
     public DailyPlayerPoints calculateTotalPoints(Integer runsScored, Integer balls, Integer fours, Integer sixes, Boolean isNO,
-                                                  Integer ballsBowled, Integer runsGiven, Integer wickets, Integer bwldLb, Integer maidens,Integer hatrick,
+                                                  Integer ballsBowled, Integer runsGiven, Integer wickets, Integer bwldLb, Integer maidens,Integer hatrick, Integer dots,
                                                   Integer catches, Integer directHits, Integer stumpings, String role, List<String> userIds, Boolean isCaptain){
 
         DailyPlayerPoints dailyPlayerPoints = new DailyPlayerPoints();
-        Float runsPoints = 0.0f;
-        Integer runsBonus = 0;
-        Float foursPoints = fours * 0.5f;
-        Integer sixesPoints = sixes * 1;
-        Float battingPoints = 0.0f;
-        Integer bowlingPoints = 0;
-        Integer fieldingPoints = 0;
-        Float strikeRate = 0.0f;
-        Integer strikeRateBonus = 0;
-        Integer wicketPoints = 0;
-                Integer economyBonus = 0;
-                Integer hatrickBonus =0;
-                Integer maidenOverBonus =0;
-                Integer lbwOrBldPoints=0;
-        Float economy = 0.0f;
 
+        BattingPoints finalBattingPoints = calculateBattingPoints( runsScored,  balls,  fours,  sixes,  isNO, role);
+        BowlingPoints finalBowlingPoints = calculateBowlingPoints(ballsBowled,  runsGiven,  wickets,  bwldLb,  maidens, hatrick, dots);
+        FieldingPoints finalFieldingPoints = calculateFieldingPoints(catches,  directHits, stumpings);
+
+        dailyPlayerPoints.setRunsScored(finalBattingPoints.getRunsScored());
+        dailyPlayerPoints.setBallsFaced(finalBattingPoints.getBallsFaced());
+        dailyPlayerPoints.setRunsPoints(finalBattingPoints.getRunsPoints());
+        dailyPlayerPoints.setFoursPoints(finalBattingPoints.getFoursPoints());
+        dailyPlayerPoints.setSixesPoints(finalBattingPoints.getSixesPoints());
+        dailyPlayerPoints.setWasNO(finalBattingPoints.getWasNO());
+        dailyPlayerPoints.setRunsBonus(finalBattingPoints.getRunsBonus());
+        dailyPlayerPoints.setStrikeRate(finalBattingPoints.getStrikeRate());
+        dailyPlayerPoints.setStrikeRateBonus(finalBattingPoints.getStrikeRateBonus());
+        dailyPlayerPoints.setBattingPoints(finalBattingPoints.getBattingPoints());
+
+        dailyPlayerPoints.setBallsBowled(finalBowlingPoints.getBallsBowled());
+        dailyPlayerPoints.setRunsConceded(finalBowlingPoints.getRunsConceded());
+        dailyPlayerPoints.setWicketPoints(finalBowlingPoints.getWicketPoints());
+        dailyPlayerPoints.setEconomyBonus(finalBowlingPoints.getEconomyBonus());
+        dailyPlayerPoints.setEconomy(finalBowlingPoints.getEconomy());
+        dailyPlayerPoints.setHatrickBonus(finalBowlingPoints.getHatrickBonus());
+        dailyPlayerPoints.setMaidenOverBonus(finalBowlingPoints.getMaidenOverBonus());
+        dailyPlayerPoints.setLbwOrBldPoints(finalBowlingPoints.getLbwOrBldPoints());
+        dailyPlayerPoints.setWicketsTaken(finalBowlingPoints.getWicketsTaken());
+        dailyPlayerPoints.setBowlingPoints(finalBowlingPoints.getBowlingPoints());
+
+        dailyPlayerPoints.setCatchesPoints(finalFieldingPoints.getCatchesPoints());
+        dailyPlayerPoints.setStumpingPoints(finalFieldingPoints.getStumpingPoints());
+        dailyPlayerPoints.setDirectHitPoints(finalFieldingPoints.getDirectHitPoints());
+        dailyPlayerPoints.setFieldingPoints(finalFieldingPoints.getFieldingPoints());
+
+        dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getBattingPoints()+dailyPlayerPoints.getBowlingPoints()+dailyPlayerPoints.getFieldingPoints());
+        dailyPlayerPoints.setAssignedTo(idsToString(userIds));
+
+        if(isCaptain == true){
+            System.out.println("inside captaincy");
+            dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints()*1.5);
+        }
+        dailyPlayerPoints.setAssignedTo(idsToString(userIds));
+
+        return dailyPlayerPoints;
+
+    }
+
+    private static BattingPoints calculateBattingPoints(Integer runsScored, Integer balls, Integer fours, Integer sixes, Boolean isNO, String role){
+
+        BattingPoints battingPoints = new BattingPoints();
+        Double runsPoints = 0.0;
+        Integer runsBonus = 0;
+        Double foursPoints = fours * 0.5;
+        Integer sixesPoints = sixes * 1;
+        Double totalBattingPoints ;
+
+        Double strikeRate = 0.0;
+        Integer strikeRateBonus = 0;
 
         if(runsScored == 0 && isNO == false) {
             System.out.println("ROLE:" +role);
@@ -242,34 +293,34 @@ public class UserService {
                 runsPoints = runsPoints - 2;
             }
             else{
-            runsPoints = runsPoints - 5;
+                runsPoints = runsPoints - 5;
             }
 
         }
         else if (runsScored > 0){
-            runsPoints = runsScored * 0.5f;
-            strikeRate = (runsScored * 100.0f )/ balls;
+            runsPoints = runsScored * 0.5;
+            strikeRate = (runsScored * 100.0 )/ balls;
 
-            if (balls >= 15){
-                if(strikeRate >200){
+            if (balls >= 15 || runsScored >=30){
+                if(strikeRate >=200){
                     if(balls >= 45){
-                        strikeRateBonus = strikeRateBonus + 10;
+                        strikeRateBonus = strikeRateBonus + 15;
                     }
                     else if(balls >= 25){
-                        strikeRateBonus = strikeRateBonus + 7;
+                        strikeRateBonus = strikeRateBonus + 10;
                     }
                     else {
-                        strikeRateBonus = strikeRateBonus + 5;
+                        strikeRateBonus = strikeRateBonus + 7;
                     }
                 }
                 else if(strikeRate >= 175.0 && strikeRate < 200.0){
-                    strikeRateBonus = strikeRateBonus + 4;
+                    strikeRateBonus = strikeRateBonus + 5;
                 }
                 else if(strikeRate >= 150.0 && strikeRate < 175.0){
-                    strikeRateBonus = strikeRateBonus + 3;
+                    strikeRateBonus = strikeRateBonus + 4;
                 }
                 else if(strikeRate >= 120.0 && strikeRate < 150.0){
-                    strikeRateBonus = strikeRateBonus + 2;
+                    strikeRateBonus = strikeRateBonus +3;
                 }
                 else if(strikeRate >= 60.0 && strikeRate < 70){
                     strikeRateBonus = strikeRateBonus - 2;
@@ -284,26 +335,56 @@ public class UserService {
         }
 
         if(runsScored >= 100){
-            runsBonus = runsBonus + 10;
+            runsBonus = runsBonus + 14;
         }
         else if(runsScored >= 50 && runsScored <100){
-            runsBonus = runsBonus + 5;
+            runsBonus = runsBonus + 6;
         }
         else if(runsScored >= 30 && runsScored < 50){
             runsBonus = runsBonus + 3;
         }
 
-        if(isNO == true && runsScored >= 15)
+        if(isNO == true && runsScored >= 25)
         {
-            runsBonus = runsBonus + 7;
+            runsBonus = runsBonus + 5;
         }
 
+        totalBattingPoints = runsPoints + foursPoints + sixesPoints + runsBonus+ strikeRateBonus;
+        battingPoints.setRunsScored(runsScored);
+        battingPoints.setBallsFaced(balls);
+        battingPoints.setRunsPoints(runsPoints);
+        battingPoints.setFoursPoints(foursPoints);
+        battingPoints.setSixesPoints(sixesPoints);
+        battingPoints.setWasNO(isNO == true ? "YES" : "NO");
+        battingPoints.setRunsBonus(runsBonus);
+        battingPoints.setStrikeRate(strikeRate);
+        battingPoints.setStrikeRateBonus(strikeRateBonus);
+        battingPoints.setBattingPoints(totalBattingPoints);
+        return battingPoints;
+    }
+
+    private static BowlingPoints calculateBowlingPoints(Integer ballsBowled, Integer runsGiven, Integer wickets, Integer bwldLb, Integer maidens, Integer hatrick, Integer dots) {
+
+        BowlingPoints bowlingPoints = new BowlingPoints();
+        Integer fieldingPoints = 0;
+        Double strikeRate = 0.0;
+        Integer strikeRateBonus = 0;
+        Integer wicketPoints = 0;
+        Integer economyBonus = 0;
+        Integer hatrickBonus =0;
+        Integer maidenOverBonus =0;
+        Integer lbwOrBldPoints=0;
+        Double economy = 0.0;
+        Double totalBowlingPoints = 0.0;
+        Double dotsBonus = dots*0.75;
 
         if(ballsBowled > 0) {
+            if(economy<=4){
+                wicketPoints = wickets * 15;
+            }
+            else if(economy >4 && economy <=5)
 
-             wicketPoints = wickets * 10;
-             lbwOrBldPoints = bwldLb * 4;
-
+            lbwOrBldPoints = bwldLb * 4;
 
             if (wickets >= 3 && wickets < 5) {
                 wicketPoints = wicketPoints + 4;
@@ -312,12 +393,10 @@ public class UserService {
             } else if (wickets > 5) {
                 wicketPoints = wicketPoints + 10;
             }
-
-             hatrickBonus = hatrick * 10;
-             maidenOverBonus = maidens * 3;
-
-             economy = ((runsGiven * 6.0f) / ballsBowled);
-             economyBonus = 0;
+            hatrickBonus = hatrick * 10;
+            maidenOverBonus = maidens * 3;
+            economy = ((runsGiven * 6.0) / ballsBowled);
+            economyBonus = 0;
             if (ballsBowled >= 12) {
                 if (economy >= 5 && economy < 6) {
                     economyBonus = economyBonus + 2;
@@ -338,57 +417,38 @@ public class UserService {
                 }
             }
         }
+        totalBowlingPoints = 0.0 + wicketPoints + economyBonus + hatrickBonus + maidenOverBonus + lbwOrBldPoints + dotsBonus;
+        bowlingPoints.setBallsBowled(ballsBowled);
+        bowlingPoints.setRunsConceded(runsGiven);
+        bowlingPoints.setWicketPoints(wicketPoints);
+        bowlingPoints.setEconomyBonus(economyBonus);
+        bowlingPoints.setEconomy(economy);
+        bowlingPoints.setHatrickBonus(hatrickBonus);
+        bowlingPoints.setMaidenOverBonus(maidenOverBonus);
+        bowlingPoints.setLbwOrBldPoints(lbwOrBldPoints);
+        bowlingPoints.setWicketsTaken(wickets);
+        bowlingPoints.setBowlingPoints(totalBowlingPoints);
+        return bowlingPoints;
 
+    }
+
+    private static FieldingPoints calculateFieldingPoints(Integer catches, Integer directHits, Integer stumpings) {
         Integer catchesPoints = catches * 4;
         Integer stumpingPoints = stumpings * 6;
         Integer directHitPoints = directHits * 10;
 
-        battingPoints = runsPoints + foursPoints + sixesPoints + runsBonus+ strikeRateBonus;
-        bowlingPoints = wicketPoints + economyBonus + hatrickBonus + maidenOverBonus + lbwOrBldPoints;
-        fieldingPoints = catchesPoints + stumpingPoints + directHitPoints;
-        Float totalGamePoints = battingPoints + bowlingPoints + fieldingPoints;
-        System.out.println(isCaptain);
-        if(isCaptain == true){
-            System.out.println("inside captaincy");
-            totalGamePoints = totalGamePoints * 1.5F;
-        }
+        FieldingPoints fieldingPoints = new FieldingPoints();
 
-        dailyPlayerPoints.setRunsScored(runsScored);
-        dailyPlayerPoints.setBallsFaced(balls);
-        dailyPlayerPoints.setRunsPoints(runsPoints);
-        dailyPlayerPoints.setFoursPoints(foursPoints);
-        dailyPlayerPoints.setSixesPoints(sixesPoints);
-        dailyPlayerPoints.setWasNO(isNO == true ? "YES" : "NO");
-        dailyPlayerPoints.setRunsBonus(runsBonus);
-        dailyPlayerPoints.setStrikeRate(strikeRate);
-        dailyPlayerPoints.setStrikeRateBonus(strikeRateBonus);
-        dailyPlayerPoints.setBattingPoints(battingPoints);
+        fieldingPoints.setCatchesPoints(catchesPoints);
+        fieldingPoints.setStumpingPoints(stumpingPoints);
+        fieldingPoints.setDirectHitPoints(directHitPoints);
+        fieldingPoints.setFieldingPoints(catchesPoints + stumpingPoints + directHitPoints);
 
-        dailyPlayerPoints.setBallsBowled(ballsBowled);
-        dailyPlayerPoints.setRunsConceded(runsGiven);
-        dailyPlayerPoints.setWicketPoints(wicketPoints);
-        dailyPlayerPoints.setEconomyBonus(economyBonus);
-        dailyPlayerPoints.setEconomy(economy);
-        dailyPlayerPoints.setHatrickBonus(hatrickBonus);
-        dailyPlayerPoints.setMaidenOverBonus(maidenOverBonus);
-        dailyPlayerPoints.setLbwOrBldPoints(lbwOrBldPoints);
-        dailyPlayerPoints.setWicketsTaken(wickets);
-        dailyPlayerPoints.setBowlingPoints(bowlingPoints);
-
-        dailyPlayerPoints.setCatchesPoints(catchesPoints);
-        dailyPlayerPoints.setStumpingPoints(stumpingPoints);
-        dailyPlayerPoints.setDirectHitPoints(directHitPoints);
-        dailyPlayerPoints.setFieldingPoints(fieldingPoints);
-
-        dailyPlayerPoints.setTotalGamePoints(totalGamePoints);
-        dailyPlayerPoints.setAssignedTo(idsToString(userIds));
-
-        return dailyPlayerPoints;
+        return fieldingPoints;
 
     }
 
-
-    private static String idsToString(List<String> userIds){
+        private static String idsToString(List<String> userIds){
 
         String out = "";
         for(String userId: userIds){
@@ -421,7 +481,6 @@ public class UserService {
                 out = out+"";
             }
         }
-
         return out;
     }
 
