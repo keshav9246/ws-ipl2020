@@ -14,10 +14,10 @@ import java.util.List;
 @Repository
 public interface ScheduleRepo extends CrudRepository<Schedule, Integer> {
 
-    @Query(value = "Select * from schedule", nativeQuery = true)
+    @Query(value = "Select * from schedule where game_num <61", nativeQuery = true)
     List<Schedule> getSchedule();
 
-    @Query(value = "Select * from schedule where game_date = :todaysDate", nativeQuery = true)
+    @Query(value = "Select * from schedule where game_date = : todaysDate", nativeQuery = true)
     List<Schedule> getGameByDate(@Param("todaysDate") LocalDate todaysDate);
 
     @Modifying @Transactional
