@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/v1/iplt20")
 public class UserController {
