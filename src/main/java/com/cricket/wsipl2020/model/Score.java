@@ -35,7 +35,10 @@ public class Score {
     //fielding points
     private Integer catchesTaken;
     private Integer directHits;
+    private Integer farDirectHits;
     private Integer stumpings;
+    private Boolean isMOM;
+    private Boolean didWin;
 
     @Transient
     private List<String> mainUserIds;
