@@ -259,6 +259,7 @@ public class UserService {
         dailyPlayerPoints.setMaidenOverBonus(finalBowlingPoints.getMaidenOverBonus());
         dailyPlayerPoints.setLbwOrBldPoints(finalBowlingPoints.getLbwOrBldPoints());
         dailyPlayerPoints.setWicketsTaken(finalBowlingPoints.getWicketsTaken());
+        dailyPlayerPoints.setDotsPints(finalBowlingPoints.getDotsPoints());
         dailyPlayerPoints.setBowlingPoints(finalBowlingPoints.getBowlingPoints());
 
         dailyPlayerPoints.setCatchesPoints(finalFieldingPoints.getCatchesPoints());
@@ -269,23 +270,28 @@ public class UserService {
         dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getBattingPoints()+dailyPlayerPoints.getBowlingPoints()+dailyPlayerPoints.getFieldingPoints());
         dailyPlayerPoints.setAssignedTo(idsToString(userIds));
 
+        Integer momOrWin = 0;
         if(isMOM == true){
             dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints() + 10);
+            momOrWin = momOrWin+ 10;
         }
 
         if(isCaptain == true){
             System.out.println("inside captaincy");
 
+            dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints()*1.5);
+
             if(didWin == true){
                 dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints()+10);
+                momOrWin = momOrWin+ 10;
             }
             else{
                 dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints()-5);
+                momOrWin = momOrWin- 5;
             }
-
-            dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints()*1.5);
         }
 
+        dailyPlayerPoints.setMomOrWinPoints(momOrWin);
         return dailyPlayerPoints;
 
     }
@@ -429,12 +435,12 @@ public class UserService {
             economy = ((runsGiven * 6.0) / ballsBowled);
             economyBonus = 0;
             if (ballsBowled >= 10) {
-                if (economy >= 5 && economy < 6) {
+                if (economy > 5 && economy <= 6) {
+                    economyBonus = economyBonus + 8;
+                } else if (economy > 4 && economy <= 5) {
                     economyBonus = economyBonus + 10;
-                } else if (economy >= 4 && economy < 5) {
+                } else if (economy <= 4) {
                     economyBonus = economyBonus + 15;
-                } else if (economy < 4) {
-                    economyBonus = economyBonus + 20;
                 } else if (economy >= 9 && economy < 10) {
                     economyBonus = economyBonus - 2;
                 } else if (economy >= 10 && economy < 11) {
@@ -454,6 +460,7 @@ public class UserService {
         bowlingPoints.setWicketPoints(wicketPoints);
         bowlingPoints.setEconomyBonus(economyBonus);
         bowlingPoints.setEconomy(economy);
+        bowlingPoints.setDotsPoints(dotsBonus);
         bowlingPoints.setHatrickBonus(hatrickBonus);
         bowlingPoints.setMaidenOverBonus(maidenOverBonus);
         bowlingPoints.setLbwOrBldPoints(lbwOrBldPoints);

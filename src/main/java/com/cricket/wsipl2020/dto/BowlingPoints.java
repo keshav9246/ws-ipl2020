@@ -12,6 +12,7 @@ public class BowlingPoints {
     private Integer wicketsTaken;
     private Double economy;
     private Integer wicketPoints ;
+    private double dotsPoints;
     private Integer economyBonus ;
     private Integer hatrickBonus ;
     private Integer maidenOverBonus;

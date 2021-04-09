@@ -33,6 +33,7 @@ public class DailyPlayerPoints {
     private Integer ballsBowled;
     private Integer wicketsTaken;
     private Double economy;
+    private Double dotsPints;
     private Integer wicketPoints ;
     private Integer economyBonus ;
     private Integer hatrickBonus ;
@@ -47,7 +48,7 @@ public class DailyPlayerPoints {
     private Integer directHitPoints;
     private Integer fieldingPoints;
 
-
+    private Integer momOrWinPoints;
     private Double totalGamePoints;
     private String assignedTo;
 
