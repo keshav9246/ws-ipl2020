@@ -7,6 +7,9 @@ import com.cricket.wsipl2020.model.*;
 import com.cricket.wsipl2020.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -121,15 +124,12 @@ public class UserService {
 
         public void submitWinningTeam(Integer gameNum, String winningTeam, Double pointsEarned){
         String winnerExists = scheduleRepo.checkWinner(gameNum);
-
-        if (winnerExists == null){
+        if (winnerExists.equals("")){
             scheduleRepo.updateWinningTeam(gameNum, winningTeam, pointsEarned);
             List<String> userIds = predictionRepo.fetchWinningUsers(gameNum, winningTeam);
             predictionRepo.updatePoints(gameNum,userIds,pointsEarned);
             Integer updatecount = userRepo.updateUserPredictionPoints(userIds, pointsEarned);
         }
-
-
     }
 
     public List<PredictionPointsDTO> fetchPredictions() {
@@ -203,6 +203,13 @@ public class UserService {
             userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),userIdsPP);
         }
         userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints(),playerScore.getMainUserIds());
+        if(null!=playerScore.getBackUpUserIds()){
+            userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints()*0.90,playerScore.getBackUpUserIds());
+        }
+        if(null!=playerScore.getRivalBackUpUserIds()){
+            userRepo.updateDailyPoints(dailyPlayerPoints.getTotalGamePoints()*0.50,playerScore.getRivalBackUpUserIds());
+        }
+
         if(playerScore.getMainUserIds()!=null){
             for(String user : playerScore.getMainUserIds()){
                 String id = idToString(user);
@@ -227,6 +234,14 @@ public class UserService {
         String totalPoints = "("+dailyPlayerPoints.getTotalGamePoints().toString()+")";
         String score =","+ playerScore.getScorePK().getGameNum().toString().concat(totalPoints);
         playerRepo.updatePlayerScore(playerScore.getScorePK().getPlayerName(), dailyPlayerPoints.getTotalGamePoints(),score);
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     public DailyPlayerPoints calculateTotalPoints(Integer runsScored, Integer balls, Integer fours, Integer sixes, Boolean isNO,
@@ -311,18 +326,21 @@ public class UserService {
         //out on 0
         if(runsScored == 0 && isNO == false) {
             System.out.println("ROLE:" +role);
-            if(role.equals("Bowler") || role.equals("Spinner")){
-                System.out.println("ROLE:" +role);
-                runsPoints = runsPoints - 2;
+            if(balls > 0)
+            {
+                if(role.equals("Bowler") || role.equals("Spinner")){
+                    System.out.println("ROLE:" +role);
+                    runsPoints = runsPoints - 2;
+                }
+                else{
+                 runsPoints = runsPoints - 5;
+                }
             }
-            else{
-                runsPoints = runsPoints - 5;
-            }
-
         }
         else if (runsScored > 0){
             runsPoints = runsScored * 0.5;
-            strikeRate = (runsScored * 100.0 )/ balls;
+            strikeRate = (runsScored * 100.0)/ balls;
+            strikeRate = round(strikeRate,3);
 
             if (balls >= 15 || runsScored >=30){
                 if(strikeRate >= 200){
@@ -399,26 +417,31 @@ public class UserService {
         Double dotsBonus = dots*0.75;
 
         if(ballsBowled > 0) {
-            if(economy<=4){
-                wicketPoints = wickets * 15;
+            if(ballsBowled >=10){
+                if(economy<=4){
+                    wicketPoints = wickets * 15;
+                }
+                else if(economy >4 && economy <=5){
+                    wicketPoints = wickets * 14;
+                }
+                else if(economy >5 && economy <=6){
+                    wicketPoints = wickets * 13;
+                }
+                else if(economy >6 && economy <=7.50){
+                    wicketPoints = wickets * 12;
+                }
+                else if(economy >7.50 && economy <=9.0){
+                    wicketPoints = wickets * 11;
+                }
+                else if(economy >9.0 && economy <=13.0){
+                    wicketPoints = wickets * 10;
+                }
+                else {
+                    wicketPoints = wickets * 8;
+                }
             }
-            else if(economy >4 && economy <=5){
-                wicketPoints = wickets * 14;
-            }
-            else if(economy >5 && economy <=6){
-                wicketPoints = wickets * 13;
-            }
-            else if(economy >6 && economy <=7.50){
+            else{
                 wicketPoints = wickets * 12;
-            }
-            else if(economy >7.50 && economy <=9.0){
-                wicketPoints = wickets * 11;
-            }
-            else if(economy >9.0 && economy <=13.0){
-                wicketPoints = wickets * 10;
-            }
-            else {
-                wicketPoints = wickets * 8;
             }
 
             lbwOrBldPoints = bwldLb * 5;
