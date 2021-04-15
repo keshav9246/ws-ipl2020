@@ -13,7 +13,10 @@ import java.util.List;
 public interface ScoreRepo extends CrudRepository<Score, ScorePK> {
 
     @Modifying @Transactional
-    @Query(value = "Insert into score values(:gameNum,:playerName, :runsScored, :balls, :fours, :sixes, :isNO, :ballsBowled, :runsGiven, :wickets, :dots, :bwldLb, :maidens,:hatrick, :catches, :directHits, :farDirectHits, :stumpings, :isMOM, :didWin)", nativeQuery = true)
+    @Query(value = "Insert into score (game_num, player_name, runs_scored, balls_faced,fours_hit ,sixes_hit,is_notout, \n" +
+            "balls_bowled,runs_conceded,wickets_taken,dots, bwld_lbw_cnb,maiden_overs,hatricks,\n" +
+            "catches_taken,direct_hits,far_direct_hits,stumpings,did_win,isMom)\n" +
+            "values (:gameNum,:playerName, :runsScored, :balls, :fours, :sixes, :isNO, :ballsBowled, :runsGiven, :wickets, :dots, :bwldLb, :maidens,:hatrick, :catches, :directHits, :farDirectHits, :stumpings, :isMOM, :didWin)", nativeQuery = true)
     public void submitScore(@Param("gameNum") Integer gameNum,
                             @Param("playerName") String playerName,
                             @Param("runsScored") Integer runsScored,
@@ -32,8 +35,9 @@ public interface ScoreRepo extends CrudRepository<Score, ScorePK> {
                             @Param("directHits") Integer directHits,
                             @Param("farDirectHits") Integer farDirectHits,
                             @Param("stumpings") Integer stumpings,
-                            @Param("isMOM")Boolean isMOM,
-                            @Param("didWin")Boolean didWin);
+                            @Param("didWin")Boolean didWin,
+                            @Param("isMOM")Boolean isMOM);
+
 
     @Query(value = "Select s from Score s order by s.scorePK.gameNum DESC")
     List<Score> fetchScores();

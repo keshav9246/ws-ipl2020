@@ -3,6 +3,7 @@ import com.cricket.wsipl2020.dto.PredictionPointsDTO;
 import com.cricket.wsipl2020.model.*;
 import com.cricket.wsipl2020.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -97,6 +98,12 @@ public class UserController {
     public List<PointsTableResponse> fetchPredictionPointsTable(){
         return userService.fetchPredictionPointsTable();
     }
+
+    @GetMapping("/allocationsByName")
+    public List<Allocations> fetchAllocationsByName(@RequestParam(name = "userId") String user_id) {
+        return userService.fetchAllocationsByName(user_id);
+    }
+
 
 //    @GetMapping("/myPredictionPoints")
 //    public PointsTableResponse fetchMyPredictionPoints(){

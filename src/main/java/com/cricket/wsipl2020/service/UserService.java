@@ -170,6 +170,7 @@ public class UserService {
     //updates score in the database
     public void submitScore(Score playerScore){
 
+        System.out.println("initial didwin  ismom"+playerScore.getIsMOM());
         //score repo me update
          scoreRepo.submitScore(playerScore.getScorePK().getGameNum(), playerScore.getScorePK().getPlayerName(),
                 playerScore.getRunsScored(), playerScore.getBallsFaced(), playerScore.getFoursHit(), playerScore.getSixesHit(), playerScore.getIsNotout(),
@@ -246,7 +247,8 @@ public class UserService {
 
     public DailyPlayerPoints calculateTotalPoints(Integer runsScored, Integer balls, Integer fours, Integer sixes, Boolean isNO,
                                                   Integer ballsBowled, Integer runsGiven, Integer wickets, Integer bwldLb, Integer maidens,Integer hatrick, Integer dots,
-                                                  Integer catches, Integer directHits, Integer farDirectHits, Integer stumpings, String role, List<String> userIds, Boolean isCaptain, Boolean didWin, Boolean isMOM){
+                                                  Integer catches, Integer directHits, Integer farDirectHits, Integer stumpings, String role, List<String> userIds,
+                                                  Boolean isCaptain, Boolean isMOM, Boolean didWin){
 
         DailyPlayerPoints dailyPlayerPoints = new DailyPlayerPoints();
 
@@ -281,16 +283,17 @@ public class UserService {
         dailyPlayerPoints.setStumpingPoints(finalFieldingPoints.getStumpingPoints());
         dailyPlayerPoints.setDirectHitPoints(finalFieldingPoints.getDirectHitPoints());
         dailyPlayerPoints.setFieldingPoints(finalFieldingPoints.getFieldingPoints());
+        dailyPlayerPoints.setMomOrWinPoints(0);
 
-        dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getBattingPoints()+dailyPlayerPoints.getBowlingPoints()+dailyPlayerPoints.getFieldingPoints());
-        dailyPlayerPoints.setAssignedTo(idsToString(userIds));
-
-        Integer momOrWin = 0;
+        System.out.println("IS MOM ?"+isMOM);
+        System.out.println("DIDwin ?"+didWin);
         if(isMOM == true){
-            dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints() + 10);
-            momOrWin = momOrWin+ 10;
+            System.out.println("inside MOOM");
+            dailyPlayerPoints.setMomOrWinPoints(10);
         }
 
+
+        dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getBattingPoints()+dailyPlayerPoints.getBowlingPoints()+dailyPlayerPoints.getFieldingPoints()+dailyPlayerPoints.getMomOrWinPoints());
         if(isCaptain == true){
             System.out.println("inside captaincy");
 
@@ -298,15 +301,12 @@ public class UserService {
 
             if(didWin == true){
                 dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints()+10);
-                momOrWin = momOrWin+ 10;
             }
             else{
                 dailyPlayerPoints.setTotalGamePoints(dailyPlayerPoints.getTotalGamePoints()-5);
-                momOrWin = momOrWin- 5;
             }
         }
-
-        dailyPlayerPoints.setMomOrWinPoints(momOrWin);
+        dailyPlayerPoints.setAssignedTo(idsToString(userIds));
         return dailyPlayerPoints;
 
     }
@@ -415,6 +415,7 @@ public class UserService {
         Double economy = 0.0;
         Double totalBowlingPoints = 0.0;
         Double dotsBonus = dots*0.75;
+        economy = ((runsGiven * 6.0) / ballsBowled);
 
         if(ballsBowled > 0) {
             if(ballsBowled >=10){
@@ -455,7 +456,7 @@ public class UserService {
             }
             hatrickBonus = hatrick * 10;
             maidenOverBonus = maidens * 6;
-            economy = ((runsGiven * 6.0) / ballsBowled);
+
             economyBonus = 0;
             if (ballsBowled >= 10) {
                 if (economy > 5 && economy <= 6) {
@@ -506,7 +507,11 @@ public class UserService {
         return fieldingPoints;
     }
 
-        private static String idsToString(List<String> userIds){
+    public List<Allocations> fetchAllocationsByName(String user_id) {
+        List<Allocations> allocationByName = allocationsRepo.fetchAllocationsByName(user_id);
+        return allocationByName;
+    }
+    private static String idsToString(List<String> userIds){
 
         String out = "";
         for(String userId: userIds){

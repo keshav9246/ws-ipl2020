@@ -22,4 +22,7 @@ public interface AllocationsRepo extends CrudRepository<Allocations,AllocationsP
 
     @Query(value = "Select a from Allocations a order by a.allocationsPK.gameNum DESC, a.allocationsPK.playerName")
     List<Allocations> fetchAllocations();
+
+    @Query(value = "Select a from Allocations a where a.allocationsPK.playerName = :userId order by a.allocationsPK.gameNum DESC, a.allocationsPK.playerName")
+    List<Allocations> fetchAllocationsByName(@Param("userId") String userId);
 }
